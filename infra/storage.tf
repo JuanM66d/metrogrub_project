@@ -1,10 +1,12 @@
-################# DEMOGRAPHICS DATA
+################# CLOUD FUNCTIONS STORAGE BUCKET
 
 resource "google_storage_bucket" "metrogrub_cloud_function_bucket" {
   name     = "metrogrub-cloud-function-bucket-${var.project_id}"
   location = "US"
   force_destroy = true
 }
+
+################# DEMOGRAPHICS DATA
 
 resource "google_storage_bucket_object" "demographics_function_zip" {
   name   = "demographics_data.zip"
