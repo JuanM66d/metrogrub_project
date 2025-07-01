@@ -61,3 +61,20 @@ resource "google_bigquery_table" "food_inspections" {
 
   schema = file("${path.module}/schema/food_inspections_schema.json")
 }
+
+
+################# DIVVY STATION DATA
+
+resource "google_bigquery_dataset" "divvy_stations" {
+  dataset_id = "divvy_stations"
+  location   = "US"
+}
+
+resource "google_bigquery_table" "divvy_stations" {
+  dataset_id = google_bigquery_dataset.divvy_stations.dataset_id
+  table_id   = "divvy_stations_data"
+
+  deletion_protection = false
+
+  schema = file("${path.module}/schema/divvy_stations_schema.json")
+}
