@@ -38,7 +38,7 @@ def ingest_chicago_food_inspections(request):
 
     print(f"Prepared {len(rows_to_insert)} rows for insertion.")
 
-    table_id = "purple-25-gradient-20250605.chicago_food_inspections.food_inspections_data"  # replace with actual project id
+    table_id = "purple-25-gradient-20250605.chicago_food_inspections.food_inspections_data"
 
     errors = client.insert_rows_json(table_id, rows_to_insert)
     if not errors:
