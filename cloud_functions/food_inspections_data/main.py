@@ -1,0 +1,49 @@
+import requests
+import json
+from google.cloud import bigquery
+
+def ingest_chicago_food_inspections(request):
+    client = bigquery.Client()
+
+    api_url = "https://data.cityofchicago.org/resource/4ijn-s7e5.json"
+    response = requests.get(api_url)
+    if response.status_code != 200:
+        print(f"Failed to fetch data: {response.status_code}")
+        return f"Failed to fetch data: {response.status_code}"
+
+    data = response.json()
+    print(f"Fetched {len(data)} records from API.")
+
+    rows_to_insert = []
+    for item in data:
+        rows_to_insert.append({
+            "inspection_id": item.get("inspection_id"),
+            "dba_name": item.get("dba_name"),
+            "aka_name": item.get("aka_name"),
+            "license_": item.get("license_"),
+            "facility_type": item.get("facility_type"),
+            "risk": item.get("risk"),
+            "address": item.get("address"),
+            "city": item.get("city"),
+            "state": item.get("state"),
+            "zip": item.get("zip"),
+            "inspection_date": item.get("inspection_date"),
+            "inspection_type": item.get("inspection_type"),
+            "results": item.get("results"),
+            "violations": item.get("violations"),
+            "latitude": float(item.get("latitude") or 0),
+            "longitude": float(item.get("longitude") or 0),
+            "location": json.dumps(item.get("location"))
+        })
+
+    print(f"Prepared {len(rows_to_insert)} rows for insertion.")
+
+    table_id = "purple-25-gradient-20250605.chicago_food_inspections.food_inspections_data"  # replace with actual project id
+
+    errors = client.insert_rows_json(table_id, rows_to_insert)
+    if not errors:
+        print("Data successfully loaded into BigQuery.")
+        return "Data successfully loaded into BigQuery."
+    else:
+        print(f"Encountered errors while inserting rows: {errors}")
+        return f"Encountered errors while inserting rows: {errors}"

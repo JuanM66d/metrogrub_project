@@ -1,0 +1,73 @@
+[
+  {
+    "name": "geometry",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "GeoJSON MultiPolygon coordinates as stringified JSON"
+  },
+  {
+    "name": "case_number",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "zoning_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "zone_type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "zone_class",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "create_date",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "edit_date",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "edit_uid",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "pd_num",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "shape_area",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "shape_len",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "objectid",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "globalid",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "override_r",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
