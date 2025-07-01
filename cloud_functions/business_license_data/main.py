@@ -14,8 +14,6 @@ def ingest_chicago_business_licenses(request):
     data = response.json()
     print(f"Fetched {len(data)} records from API.")
 
-    printf("Juan's modifications")
-
     rows_to_insert = []
     for item in data:
         rows_to_insert.append({
