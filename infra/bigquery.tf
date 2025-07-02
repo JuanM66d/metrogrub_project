@@ -78,3 +78,19 @@ resource "google_bigquery_table" "divvy_stations" {
 
   schema = file("${path.module}/schema/divvy_stations_schema.json")
 }
+
+################# CTA BUS DATA
+
+resource "google_bigquery_dataset" "cta_bus_stations" {
+  dataset_id = "cta_bus_stations"
+  location   = "US"
+}
+
+resource "google_bigquery_table" "cta_bus_stations" {
+  dataset_id = google_bigquery_dataset.cta_bus_stations.dataset_id
+  table_id   = "cta_bus_stations_data"
+
+  deletion_protection = false
+
+  schema = file("${path.module}/schema/cta_bus_stations_schema.json")
+}

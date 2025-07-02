@@ -1,11 +1,11 @@
 import requests
-import json
 from google.cloud import bigquery
+import json
 
-def ingest_chicago_zoning(request):
+def ingest_cta_bus_station_data(request):
     client = bigquery.Client()
 
-    base_api_url = "https://data.cityofchicago.org/resource/dj47-wfun.json"
+    base_api_url = "https://data.cityofchicago.org/resource/qs84-j7wh.json"
     limit = 5000
     offset = 0
     all_rows = []
@@ -25,34 +25,30 @@ def ingest_chicago_zoning(request):
             break  # No more data to fetch
 
         for item in data:
+            coordinates = item.get("the_geom", {}).get("coordinates", [None, None])
             all_rows.append({
-                "geometry": json.dumps(item.get("the_geom")),  # stringify nested geojson
-                "case_number": item.get("case_numbe"),
-                "zoning_id": item.get("zoning_id"),
-                "zone_type": item.get("zone_type"),
-                "zone_class": item.get("zone_class"),
-                "create_date": item.get("create_dat"),
-                "edit_date": item.get("edit_date"),
-                "edit_uid": item.get("edit_uid"),
-                "pd_num": item.get("pd_num"),
-                "shape_area": float(item.get("shape_area") or 0),
-                "shape_len": float(item.get("shape_len") or 0),
-                "objectid": item.get("objectid"),
-                "globalid": item.get("globalid"),
-                "override_r": item.get("override_r"),
-            })
-
+                "longitude": coordinates[0],
+                "latitude": coordinates[1],
+                "systemstop": item.get("systemstop"),
+                "street": item.get("street"),
+                "cross_st": item.get("cross_st"),
+                "dir": item.get("dir"),
+                "pos": item.get("pos"),
+                "routesstpg": item.get("routesstpg"),
+                "city": item.get("city"),
+                "public_nam": item.get("public_nam")
+        })
+            
         offset += limit
 
         # Break early if fewer than limit records returned (end of dataset)
         if len(data) < limit:
             break
 
-    print(f"Total records prepared for insertion: {len(all_rows)}.")
+    print(f"Prepared {len(all_rows)} rows for insertion.")
 
-    table_id = "purple-25-gradient-20250605.chicago_zoning.zoning_data"
+    table_id = "purple-25-gradient-20250605.divvy_stations.divvy_stations_data"
 
-    # Insert in batches of 10,000 rows to avoid API insert limits
     batch_size = 1000
     for i in range(0, len(all_rows), batch_size):
         batch = all_rows[i:i+batch_size]
@@ -60,6 +56,6 @@ def ingest_chicago_zoning(request):
         if errors:
             print(f"Encountered errors while inserting rows: {errors}")
             return f"Encountered errors while inserting rows: {errors}"
-
+                    
     print("Data successfully loaded into BigQuery.")
     return "Data successfully loaded into BigQuery."

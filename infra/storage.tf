@@ -45,3 +45,11 @@ resource "google_storage_bucket_object" "divvy_stations_function_zip" {
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
   source = "../cloud_functions/divvy_stations_data/divvy_stations.zip"
 }
+
+################# CTA BUS STATION DATA
+
+resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
+  name   = "cta_bus_stations.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cta_bus_stations_data/cta_bus_stations.zip"
+}
