@@ -52,3 +52,14 @@ resource "google_cloudfunctions_function_iam_member" "divvy_stations_invoker" {
   role   = "roles/cloudfunctions.invoker"
   member = "allUsers"
 }
+
+################# BUS STATION STATION DATA
+
+resource "google_cloudfunctions_function_iam_member" "cta_bus_stations_invoker" {
+  project        = google_cloudfunctions_function.cta_bus_stations_function.project
+  region         = google_cloudfunctions_function.cta_bus_stations_function.region
+  cloud_function = google_cloudfunctions_function.cta_bus_stations_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+}
