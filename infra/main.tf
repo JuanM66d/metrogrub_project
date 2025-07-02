@@ -13,6 +13,7 @@ terraform {
 
   backend "gcs" {
     bucket = "tf-state-bucket-pmetrogrub"
+    prefix  = "terraform/state"
   }
 
   required_version = ">= 1.5.0"
