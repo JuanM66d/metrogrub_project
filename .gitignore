@@ -2,3 +2,4 @@
 *.json
 .DS_Store
 ../.DS_Store
+data_cleaning/data_exports/
