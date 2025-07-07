@@ -1,3 +1,10 @@
+################# SCHEDULER INVOKER SERVICE ACCOUNT
+
+resource "google_service_account" "scheduler_invoker" {
+  account_id   = "scheduler-invoker"
+  display_name = "Cloud Scheduler Invoker Service Account"
+}
+
 ################# DEMOGRAPHICS DATA
 
 resource "google_cloudfunctions_function_iam_member" "invoker" {
@@ -7,6 +14,15 @@ resource "google_cloudfunctions_function_iam_member" "invoker" {
 
   role   = "roles/cloudfunctions.invoker"
   member = "allUsers"
+}
+
+resource "google_cloudfunctions_function_iam_member" "scheduler_invoker" {
+  project        = google_cloudfunctions_function.demographics_function.project
+  region         = google_cloudfunctions_function.demographics_function.region
+  cloud_function = google_cloudfunctions_function.demographics_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "serviceAccount:${google_service_account.scheduler_invoker.email}"
 }
 
 ################# ZONING DATA
