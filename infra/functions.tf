@@ -107,3 +107,18 @@ resource "google_cloudfunctions_function" "cta_bus_stations_function" {
     "BIGQUERY_TABLE" = google_bigquery_table.cta_bus_stations.id
   }
 }
+
+################# FOOT TRAFFIC DATA
+
+resource "google_cloudfunctions_function" "foot_traffic_function" {
+  name        = "gen-foot-traffic-data"
+  runtime     = "python310"
+  entry_point = "main"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.gen_foot_traffic_function_zip.name
+
+  trigger_http = true
+  available_memory_mb = 1024
+
+}

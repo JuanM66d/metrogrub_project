@@ -25,7 +25,7 @@ resource "google_cloud_scheduler_job" "foot_traffic_job" {
 
     http_target {
         http_method = "POST"
-        uri         = google_cloudfunctions_function.demographics_function.https_trigger_url
+        uri         = google_cloudfunctions_function.foot_traffic_function.https_trigger_url
 
         oidc_token {
         service_account_email = google_service_account.scheduler_invoker.email

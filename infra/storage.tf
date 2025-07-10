@@ -53,3 +53,12 @@ resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
   source = "../cloud_functions/cta_bus_stations_data/cta_bus_stations.zip"
 }
+
+
+################# FOOT TRAFFIC DATA
+
+resource "google_storage_bucket_object" "gen_foot_traffic_function_zip" {
+  name   = "gen_foot_traffic_data.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/foot_traffic_data/gen_foot_traffic_data.zip"
+}
