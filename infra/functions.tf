@@ -53,6 +53,23 @@ resource "google_cloudfunctions_function" "business_licenses_function" {
   }
 }
 
+resource "google_cloudfunctions_function" "clean_business_licenses_function" {
+  name        = "clean-chicago-business-licenses"
+  runtime     = "python310"
+  entry_point = "clean_chicago_business_licenses"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.clean_business_licenses_function_zip.name
+
+  trigger_http = true
+  available_memory_mb = 1024
+
+  environment_variables = {
+    "INPUT_TABLE" = "${google_bigquery_table.active_business_licenses.project}.${google_bigquery_table.active_business_licenses.dataset_id}.${google_bigquery_table.active_business_licenses.table_id}"
+    "OUTPUT_TABLE" = "${google_bigquery_table.clean_active_business_licenses.project}.${google_bigquery_table.clean_active_business_licenses.dataset_id}.${google_bigquery_table.clean_active_business_licenses.table_id}"
+  }
+}
+
 ################# FOOD INSPECTION DATA
 
 resource "google_cloudfunctions_function" "food_inspections_function" {

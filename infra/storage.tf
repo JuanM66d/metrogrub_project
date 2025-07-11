@@ -30,6 +30,12 @@ resource "google_storage_bucket_object" "business_licenses_function_zip" {
   source = "../cloud_functions/ingestion/business_license_data/business_licenses.zip"
 }
 
+resource "google_storage_bucket_object" "clean_business_licenses_function_zip" {
+  name   = "clean_business_licenses.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/business_license_data/clean_business_licenses.zip"
+}
+
 ################# FOOD INSPECTION DATA
 
 resource "google_storage_bucket_object" "food_inspections_function_zip" {
