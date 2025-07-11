@@ -11,7 +11,7 @@ resource "google_storage_bucket" "metrogrub_cloud_function_bucket" {
 resource "google_storage_bucket_object" "demographics_function_zip" {
   name   = "demographics_data.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/demographics_data/demographics_data.zip"
+  source = "../cloud_functions/ingestion/demographics_data/demographics_data.zip"
 }
 
 ################# ZONING DATA
@@ -19,7 +19,7 @@ resource "google_storage_bucket_object" "demographics_function_zip" {
 resource "google_storage_bucket_object" "zoning_function_zip" {
   name   = "zoning_data.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/zoning_data/zoning_data.zip"
+  source = "../cloud_functions/ingestion/zoning_data/zoning_data.zip"
 }
 
 ################# ACTIVE BUSINESS LICENSE DATA
@@ -27,7 +27,13 @@ resource "google_storage_bucket_object" "zoning_function_zip" {
 resource "google_storage_bucket_object" "business_licenses_function_zip" {
   name   = "business_licenses.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/business_license_data/business_licenses.zip"
+  source = "../cloud_functions/ingestion/business_license_data/business_licenses.zip"
+}
+
+resource "google_storage_bucket_object" "clean_business_licenses_function_zip" {
+  name   = "clean_business_licenses.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/business_license_data/clean_business_licenses.zip"
 }
 
 ################# FOOD INSPECTION DATA
@@ -35,7 +41,7 @@ resource "google_storage_bucket_object" "business_licenses_function_zip" {
 resource "google_storage_bucket_object" "food_inspections_function_zip" {
   name   = "food_inspections.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/food_inspections_data/food_inspections.zip"
+  source = "../cloud_functions/ingestion/food_inspections_data/food_inspections.zip"
 }
 
 ################# DIVVY STATION DATA
@@ -43,7 +49,7 @@ resource "google_storage_bucket_object" "food_inspections_function_zip" {
 resource "google_storage_bucket_object" "divvy_stations_function_zip" {
   name   = "divvy_stations.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/divvy_stations_data/divvy_stations.zip"
+  source = "../cloud_functions/ingestion/divvy_stations_data/divvy_stations.zip"
 }
 
 ################# CTA BUS STATION DATA
@@ -51,7 +57,7 @@ resource "google_storage_bucket_object" "divvy_stations_function_zip" {
 resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
   name   = "cta_bus_stations.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/cta_bus_stations_data/cta_bus_stations.zip"
+  source = "../cloud_functions/ingestion/cta_bus_stations_data/cta_bus_stations.zip"
 }
 
 
@@ -60,5 +66,5 @@ resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
 resource "google_storage_bucket_object" "gen_foot_traffic_function_zip" {
   name   = "gen_foot_traffic_data.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
-  source = "../cloud_functions/foot_traffic_data/gen_foot_traffic_data.zip"
+  source = "../cloud_functions/generation/foot_traffic_data/gen_foot_traffic_data.zip"
 }
