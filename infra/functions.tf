@@ -82,7 +82,7 @@ resource "google_cloudfunctions_function" "food_inspections_function" {
 
   trigger_http = true
   available_memory_mb = 1024
-  timeout = 240
+  timeout = 540 # 9 minutes
 
   environment_variables = {
     "BIGQUERY_TABLE" = google_bigquery_table.food_inspections.id
