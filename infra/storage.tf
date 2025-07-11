@@ -28,6 +28,12 @@ resource "google_storage_bucket_object" "zoning_function_zip" {
   source = "../cloud_functions/ingestion/zoning_data/zoning_data.zip"
 }
 
+resource "google_storage_bucket_object" "clean_zoning_function_zip" {
+  name   = "clean_zoning_data.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/zoning_data/zoning_data.zip"
+}
+
 ################# ACTIVE BUSINESS LICENSE DATA
 
 resource "google_storage_bucket_object" "business_licenses_function_zip" {

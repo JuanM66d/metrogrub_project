@@ -37,6 +37,13 @@ resource "google_bigquery_table" "zoning_data" {
   schema = file("${path.module}/schema/zoning_schema.json")
 }
 
+resource "google_bigquery_table" "clean_zoning_data" {
+  dataset_id = google_bigquery_dataset.zoning.dataset_id
+  table_id   = "clean_zoning_data"
+
+  deletion_protection = false
+}
+
 ################# ACTIVE BUSINESS LICENSE DATA
 
 resource "google_bigquery_dataset" "business_licenses" {

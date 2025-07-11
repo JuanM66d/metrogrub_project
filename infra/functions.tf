@@ -53,6 +53,23 @@ resource "google_cloudfunctions_function" "zoning_function" {
   }
 }
 
+resource "google_cloudfunctions_function" "clean_zoning_function" {
+  name        = "clean-chicago-zoning"
+  runtime     = "python310"
+  entry_point = "clean_chicago_zoning"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.clean_zoning_function_zip.name
+
+  trigger_http = true
+  available_memory_mb = 512
+
+  environment_variables = {
+    "INPUT_TABLE" = "${google_bigquery_table.zoning_data.project}.${google_bigquery_table.zoning_data.dataset_id}.${google_bigquery_table.zoning_data.table_id}"
+    "OUTPUT_TABLE" = "${google_bigquery_table.clean_zoning_data.project}.${google_bigquery_table.clean_zoning_data.dataset_id}.${google_bigquery_table.clean_zoning_data.table_id}"
+  }
+}
+
 ################# ACTIVE BUSINESS LICENSE DATA
 
 resource "google_cloudfunctions_function" "business_licenses_function" {

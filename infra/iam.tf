@@ -36,6 +36,15 @@ resource "google_cloudfunctions_function_iam_member" "zoning_invoker" {
   member = "allUsers"
 }
 
+resource "google_cloudfunctions_function_iam_member" "clean_zoning_invoker" {
+  project        = google_cloudfunctions_function.clean_zoning_function.project
+  region         = google_cloudfunctions_function.clean_zoning_function.region
+  cloud_function = google_cloudfunctions_function.clean_zoning_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+}
+
 ################# ACTIVE BUSINESS LICENSE DATA
 
 resource "google_cloudfunctions_function_iam_member" "business_licenses_invoker" {
