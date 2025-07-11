@@ -46,6 +46,13 @@ resource "google_bigquery_table" "active_business_licenses" {
   schema = file("${path.module}/schema/active_business_licenses_schema.json")
 }
 
+resource "google_bigquery_table" "clean_active_business_licenses" {
+  dataset_id = google_bigquery_dataset.business_licenses.dataset_id
+  table_id   = "clean_active_business_licenses"
+
+  deletion_protection = false
+}
+
 ################# FOOD INSPECTION DATA
 
 resource "google_bigquery_dataset" "food_inspections" {
