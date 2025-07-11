@@ -14,6 +14,12 @@ resource "google_storage_bucket_object" "demographics_function_zip" {
   source = "../cloud_functions/ingestion/demographics_data/demographics_data.zip"
 }
 
+resource "google_storage_bucket_object" "clean_demographics_function_zip" {
+  name   = "demographics_data.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/demographics_data/demographics_data.zip"
+}
+
 ################# ZONING DATA
 
 resource "google_storage_bucket_object" "zoning_function_zip" {

@@ -16,6 +16,24 @@ resource "google_cloudfunctions_function" "demographics_function" {
   }
 }
 
+resource "google_cloudfunctions_function" "clean_demographics_function" {
+  name        = "clean-chicago-demographics"
+  runtime     = "python310"
+  entry_point = "clean_chicago_demographics"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.clean_demographics_function_zip.name
+
+  trigger_http = true
+
+  available_memory_mb = 256
+
+  environment_variables = {
+    "INPUT_TABLE" = "${google_bigquery_table.population_counts.project}.${google_bigquery_table.population_counts.dataset_id}.${google_bigquery_table.population_counts.table_id}"
+    "OUTPUT_TABLE" = "${google_bigquery_table.clean_population_counts.project}.${google_bigquery_table.clean_population_counts.dataset_id}.${google_bigquery_table.clean_population_counts.table_id}"
+  }
+}
+
 
 ################# ZONING DATA
 

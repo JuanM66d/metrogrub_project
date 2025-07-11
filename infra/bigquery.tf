@@ -14,6 +14,13 @@ resource "google_bigquery_table" "population_counts" {
   schema = file("${path.module}/schema/population_schema.json")
 }
 
+resource "google_bigquery_table" "clean_population_counts" {
+  dataset_id = google_bigquery_dataset.demographics.dataset_id
+  table_id   = "clean_population_counts"
+
+  deletion_protection = false
+}
+
 ################# ZONING DATA
 
 resource "google_bigquery_dataset" "zoning" {
