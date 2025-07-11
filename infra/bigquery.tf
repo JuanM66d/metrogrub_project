@@ -11,7 +11,7 @@ resource "google_bigquery_table" "population_counts" {
 
   deletion_protection = false
 
-  schema = file("${path.module}/schema/ingestion/population_schema.json")
+  schema = file("${path.module}/schema/population_schema.json")
 }
 
 ################# ZONING DATA
@@ -27,7 +27,7 @@ resource "google_bigquery_table" "zoning_data" {
 
   deletion_protection = false
 
-  schema = file("${path.module}/schema/ingestion/zoning_schema.json")
+  schema = file("${path.module}/schema/zoning_schema.json")
 }
 
 ################# ACTIVE BUSINESS LICENSE DATA
@@ -43,7 +43,7 @@ resource "google_bigquery_table" "active_business_licenses" {
 
   deletion_protection = false
 
-  schema = file("${path.module}/schema/ingestion/active_business_licenses_schema.json")
+  schema = file("${path.module}/schema/active_business_licenses_schema.json")
 }
 
 resource "google_bigquery_table" "clean_active_business_licenses" {
@@ -51,8 +51,6 @@ resource "google_bigquery_table" "clean_active_business_licenses" {
   table_id   = "clean_active_business_licenses"
 
   deletion_protection = false
-
-  #schema = file("${path.module}/schema/cleaning/clean_active_business_licenses_schema.json")
 }
 
 ################# FOOD INSPECTION DATA
@@ -68,7 +66,7 @@ resource "google_bigquery_table" "food_inspections" {
 
   deletion_protection = false
 
-  schema = file("${path.module}/schema/ingestion/food_inspections_schema.json")
+  schema = file("${path.module}/schema/food_inspections_schema.json")
 }
 
 
@@ -85,7 +83,7 @@ resource "google_bigquery_table" "divvy_stations" {
 
   deletion_protection = false
 
-  schema = file("${path.module}/schema/ingestion/divvy_stations_schema.json")
+  schema = file("${path.module}/schema/divvy_stations_schema.json")
 }
 
 ################# CTA BUS DATA
@@ -101,5 +99,5 @@ resource "google_bigquery_table" "cta_bus_stations" {
 
   deletion_protection = false
 
-  schema = file("${path.module}/schema/ingestion/cta_bus_stations_schema.json")
+  schema = file("${path.module}/schema/cta_bus_stations_schema.json")
 }
