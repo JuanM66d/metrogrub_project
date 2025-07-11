@@ -101,3 +101,10 @@ resource "google_bigquery_table" "cta_bus_stations" {
 
   schema = file("${path.module}/schema/cta_bus_stations_schema.json")
 }
+
+resource "google_bigquery_table" "clean_cta_bus_stations" {
+  dataset_id = google_bigquery_dataset.cta_bus_stations.dataset_id
+  table_id   = "clean_cta_bus_stations"
+
+  deletion_protection = false
+}

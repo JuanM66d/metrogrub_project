@@ -60,6 +60,11 @@ resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
   source = "../cloud_functions/ingestion/cta_bus_stations_data/cta_bus_stations.zip"
 }
 
+resource "google_storage_bucket_object" "clean_cta_bus_stations_function_zip" {
+  name   = "cta_bus_stations.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/bus_stations/cta_bus_stations.zip"
+}
 
 ################# FOOT TRAFFIC DATA
 

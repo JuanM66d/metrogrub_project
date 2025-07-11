@@ -125,6 +125,23 @@ resource "google_cloudfunctions_function" "cta_bus_stations_function" {
   }
 }
 
+resource "google_cloudfunctions_function" "clean_cta_bus_stations_function" {
+  name        = "clean-cta-bus-stations"
+  runtime     = "python310"
+  entry_point = "clean_cta_bus_stations"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.clean_cta_bus_stations_function_zip.name
+
+  trigger_http = true
+  available_memory_mb = 1024
+
+  environment_variables = {
+    "INPUT_TABLE" = "${google_bigquery_table.cta_bus_stations.project}.${google_bigquery_table.cta_bus_stations.dataset_id}.${google_bigquery_table.cta_bus_stations.table_id}"
+    "OUTPUT_TABLE" = "${google_bigquery_table.clean_cta_bus_stations.project}.${google_bigquery_table.clean_cta_bus_stations.dataset_id}.${google_bigquery_table.clean_cta_bus_stations.table_id}"
+  }
+}
+
 ################# FOOT TRAFFIC DATA
 
 resource "google_cloudfunctions_function" "foot_traffic_function" {
