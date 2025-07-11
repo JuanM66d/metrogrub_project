@@ -81,6 +81,12 @@ resource "google_cloud_scheduler_job" "food_inspections_job" {
     time_zone        = "America/Chicago"
     attempt_deadline = "1200s" # 20 minutes
 
+    retry_config {
+        retry_count = 3
+        min_backoff_duration = "900s" # 15 minutes
+        max_backoff_duration = "7200s" # 2 hours
+    }
+
     http_target {
         http_method = "POST"
         uri         = google_cloudfunctions_function.food_inspections_function.https_trigger_url
