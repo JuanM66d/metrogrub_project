@@ -15,7 +15,7 @@ resource "google_storage_bucket_object" "demographics_function_zip" {
 }
 
 resource "google_storage_bucket_object" "clean_demographics_function_zip" {
-  name   = "demographics_data.zip"
+  name   = "clean_demographics_data.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
   source = "../cloud_functions/cleaning/demographics_data/demographics_data.zip"
 }
@@ -58,6 +58,12 @@ resource "google_storage_bucket_object" "divvy_stations_function_zip" {
   source = "../cloud_functions/ingestion/divvy_stations_data/divvy_stations.zip"
 }
 
+resource "google_storage_bucket_object" "clean_divvy_stations_function_zip" {
+  name   = "clean_divvy_stations.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/divvy_stations/divvy_stations.zip"
+}
+
 ################# CTA BUS STATION DATA
 
 resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
@@ -67,7 +73,7 @@ resource "google_storage_bucket_object" "cta_bus_stations_function_zip" {
 }
 
 resource "google_storage_bucket_object" "clean_cta_bus_stations_function_zip" {
-  name   = "cta_bus_stations.zip"
+  name   = "clean_cta_bus_stations.zip"
   bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
   source = "../cloud_functions/cleaning/bus_stations/cta_bus_stations.zip"
 }

@@ -93,6 +93,13 @@ resource "google_bigquery_table" "divvy_stations" {
   schema = file("${path.module}/schema/divvy_stations_schema.json")
 }
 
+resource "google_bigquery_table" "clean_divvy_stations" {
+  dataset_id = google_bigquery_dataset.divvy_stations.dataset_id
+  table_id   = "clean_divvy_stations_data"
+
+  deletion_protection = false
+}
+
 ################# CTA BUS DATA
 
 resource "google_bigquery_dataset" "cta_bus_stations" {

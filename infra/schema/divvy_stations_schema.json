@@ -2,11 +2,11 @@
   {"name": "id", "type": "STRING", "mode": "NULLABLE"},
   {"name": "station_name", "type": "STRING", "mode": "NULLABLE"},
   {"name": "short_name", "type": "STRING", "mode": "NULLABLE"},
-  {"name": "total_docks", "type": "STRING", "mode": "NULLABLE"},
-  {"name": "docks_in_service", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "total_docks", "type": "INTEGER", "mode": "NULLABLE"},
+  {"name": "docks_in_service", "type": "INTEGER", "mode": "NULLABLE"},
   {"name": "status", "type": "STRING", "mode": "NULLABLE"},
-  {"name": "latitude", "type": "STRING", "mode": "NULLABLE"},
-  {"name": "longitude", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "latitude", "type": "FLOAT", "mode": "NULLABLE"},
+  {"name": "longitude", "type": "FLOAT", "mode": "NULLABLE"},
   {"name": "location_type", "type": "STRING", "mode": "NULLABLE"},
   {"name": "location_coordinates", "type": "STRING", "mode": "NULLABLE"}
 ]
