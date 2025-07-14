@@ -1,21 +1,18 @@
-import pandas as pd
-import numpy as np
 import os
-import pandas_gbq
-from google.cloud import bigquery
-from google.oauth2 import service_account
 import ast
-from shapely.wkt import loads as wkt_loads
-import geopandas as gpd
-from shapely.geometry import shape
 import json
+import pandas_gbq
+import numpy as np
+import pandas as pd
+import geopandas as gpd
 
-food_license = pd.read_csv(
-    'data_outputs/food_licenses_cleaned.csv',
-    dtype={'zip_code': str,'business_activity_id': str},  # force zip_code column to be string
-    header='infer'
-)
+from google.cloud import bigquery
+from shapely.geometry import shape
+from google.oauth2 import service_account
+from shapely.wkt import loads as wkt_loads
 
+food_inspections = pd.read_csv('data_outputs/food_inspections.csv', dtype={'zip_code': str,'business_activity_id': str}, header='infer')
+food_license = pd.read_csv('data_outputs/food_licenses_cleaned.csv', dtype={'zip_code': str,'business_activity_id': str}, header='infer')
 divvy_stations = pd.read_csv('data_outputs/divvy_stations_cleaned.csv',dtype={'bus_stop_id': str}, header='infer')
 population_counts = pd.read_csv('data_outputs/population_counts_cleaned.csv', header='infer')
 yearly_average = pd.read_csv('data_exports/yearly_average.csv', header='infer')
@@ -28,6 +25,10 @@ food_license['is_food'] = 1
 food_license['is_bus_stop'] = 0
 food_license['is_divvy_station'] = 0
 
+food_inspections['is_food'] = 1
+food_inspections['is_bus_stop'] = 0
+food_inspections['is_divvy_station'] = 0
+
 bus_stop['is_food'] = 0
 bus_stop['is_bus_stop'] = 1
 bus_stop['is_divvy_station'] = 0
@@ -38,7 +39,7 @@ divvy_stations['is_divvy_station'] = 1
 divvy_stations_v2 = divvy_stations.drop(['total_docks','status','location_type','location_coordinates'],axis=1)
 
 # Append point type data sources together
-combined_df = pd.concat([food_license, bus_stop,divvy_stations_v2], ignore_index=True)
+combined_df = pd.concat([food_license, food_inspections, bus_stop, divvy_stations_v2], ignore_index=True)
 
 # Convert WKT string to shapely geometry
 combined_df_v2 = combined_df.copy()

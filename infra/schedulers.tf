@@ -145,6 +145,29 @@ resource "google_cloud_scheduler_job" "food_inspections_job" {
     }
 }
 
+resource "google_cloud_scheduler_job" "clean_food_inspections_job" {
+    name             = "clean-chicago-food-inspections-job"
+    description      = "Triggers the clean-chicago-food-inspections function every 3 months"
+    schedule         = "15 3 1 1,4,7,10 *" # minute 15, 3AM, on the first day, of Jan, Apr, Jul, Oct (every 3 months)
+    time_zone        = "America/Chicago"
+    attempt_deadline = "1200s" # 20 minutes
+
+    retry_config {
+        retry_count = 3
+        min_backoff_duration = "900s" # 15 minutes
+        max_backoff_duration = "7200s" # 2 hours
+    }
+
+    http_target {
+        http_method = "POST"
+        uri         = google_cloudfunctions_function.clean_food_inspections_function.https_trigger_url
+
+        oidc_token {
+        service_account_email = google_service_account.scheduler_invoker.email
+        }
+    }
+}
+
 
 ################# DIVVY STATION DATA SCHEDULER
 

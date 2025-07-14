@@ -56,6 +56,12 @@ resource "google_storage_bucket_object" "food_inspections_function_zip" {
   source = "../cloud_functions/ingestion/food_inspections_data/food_inspections.zip"
 }
 
+resource "google_storage_bucket_object" "clean_food_inspections_function_zip" {
+  name   = "food_inspections.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/cleaning/food_inspections_data/food_inspections.zip"
+}
+
 ################# DIVVY STATION DATA
 
 resource "google_storage_bucket_object" "divvy_stations_function_zip" {

@@ -83,6 +83,13 @@ resource "google_bigquery_table" "food_inspections" {
   schema = file("${path.module}/schema/food_inspections_schema.json")
 }
 
+resource "google_bigquery_table" "clean_food_inspections" {
+  dataset_id = google_bigquery_dataset.food_inspections.dataset_id
+  table_id   = "clean_food_inspections_data"
+
+  deletion_protection = false
+}
+
 
 ################# DIVVY STATION DATA
 

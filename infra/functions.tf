@@ -124,6 +124,24 @@ resource "google_cloudfunctions_function" "food_inspections_function" {
   }
 }
 
+resource "google_cloudfunctions_function" "clean_food_inspections_function" {
+  name        = "clean-chicago-food-inspections"
+  runtime     = "python310"
+  entry_point = "clean_chicago_food_inspections"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.clean_food_inspections_function_zip.name
+
+  trigger_http = true
+  available_memory_mb = 1024
+  timeout = 540 # 9 minutes
+
+  environment_variables = {
+    "INPUT_TABLE" = "${google_bigquery_table.food_inspections.project}.${google_bigquery_table.food_inspections.dataset_id}.${google_bigquery_table.food_inspections.table_id}"
+    "OUTPUT_TABLE" = "${google_bigquery_table.clean_food_inspections.project}.${google_bigquery_table.clean_food_inspections.dataset_id}.${google_bigquery_table.clean_food_inspections.table_id}"
+  }
+}
+
 ################# DIVVY STATION DATA
 
 resource "google_cloudfunctions_function" "divvy_stations_function" {

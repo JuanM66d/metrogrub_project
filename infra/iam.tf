@@ -76,6 +76,15 @@ resource "google_cloudfunctions_function_iam_member" "food_inspections_invoker" 
   member = "allUsers"
 }
 
+resource "google_cloudfunctions_function_iam_member" "clean_food_inspections_invoker" {
+  project        = google_cloudfunctions_function.clean_food_inspections_function.project
+  region         = google_cloudfunctions_function.clean_food_inspections_function.region
+  cloud_function = google_cloudfunctions_function.clean_food_inspections_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+}
+
 ################# DIVVY STATION DATA
 
 resource "google_cloudfunctions_function_iam_member" "divvy_stations_invoker" {
