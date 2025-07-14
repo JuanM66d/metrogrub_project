@@ -1,0 +1,102 @@
+[
+  {
+    "name": "geography_type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "year",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "zip_code",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_total",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_0_to_17",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_18_to_29",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_30_to_39",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_40_to_49",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_50_to_59",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_60_to_69",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_70_to_79",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_80",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_female",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_male",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_latinx",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_asian",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_black",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_white",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "population_other",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "record_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

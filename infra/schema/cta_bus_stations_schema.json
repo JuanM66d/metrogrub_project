@@ -1,0 +1,52 @@
+[
+  {
+    "name": "longitude",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "latitude",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "systemstop",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "street",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "cross_st",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dir",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "pos",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "routesstpg",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "city",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "public_nam",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

@@ -1,0 +1,7 @@
+data_cleaning/.venv/
+.DS_Store
+data_cleaning/tl_2024_us_zcta520/
+data_cleaning/data_exports/
+data_cleaning/data_outputs/
+data_cleaning/tmp/
+*.json

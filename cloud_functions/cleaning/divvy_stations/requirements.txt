@@ -1,0 +1,7 @@
+numpy
+pandas
+shapely
+db-dtypes
+pandas-gbq>=0.26.1
+google-cloud-bigquery
+google-cloud-bigquery-storage

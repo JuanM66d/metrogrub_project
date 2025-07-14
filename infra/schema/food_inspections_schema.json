@@ -1,0 +1,19 @@
+[
+  {"name": "inspection_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "dba_name", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "aka_name", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "license_", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "facility_type", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "risk", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "address", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "city", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "state", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "zip", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "inspection_date", "type": "TIMESTAMP", "mode": "NULLABLE"},
+  {"name": "inspection_type", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "results", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "violations", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "latitude", "type": "FLOAT", "mode": "NULLABLE"},
+  {"name": "longitude", "type": "FLOAT", "mode": "NULLABLE"},
+  {"name": "location", "type": "STRING", "mode": "NULLABLE"}
+]
