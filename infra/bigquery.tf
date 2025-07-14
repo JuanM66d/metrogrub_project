@@ -14,6 +14,13 @@ resource "google_bigquery_table" "population_counts" {
   schema = file("${path.module}/schema/population_schema.json")
 }
 
+resource "google_bigquery_table" "clean_population_counts" {
+  dataset_id = google_bigquery_dataset.demographics.dataset_id
+  table_id   = "clean_population_counts"
+
+  deletion_protection = false
+}
+
 ################# ZONING DATA
 
 resource "google_bigquery_dataset" "zoning" {
@@ -28,6 +35,13 @@ resource "google_bigquery_table" "zoning_data" {
   deletion_protection = false
 
   schema = file("${path.module}/schema/zoning_schema.json")
+}
+
+resource "google_bigquery_table" "clean_zoning_data" {
+  dataset_id = google_bigquery_dataset.zoning.dataset_id
+  table_id   = "clean_zoning_data"
+
+  deletion_protection = false
 }
 
 ################# ACTIVE BUSINESS LICENSE DATA
@@ -69,6 +83,13 @@ resource "google_bigquery_table" "food_inspections" {
   schema = file("${path.module}/schema/food_inspections_schema.json")
 }
 
+resource "google_bigquery_table" "clean_food_inspections" {
+  dataset_id = google_bigquery_dataset.food_inspections.dataset_id
+  table_id   = "clean_food_inspections_data"
+
+  deletion_protection = false
+}
+
 
 ################# DIVVY STATION DATA
 
@@ -86,6 +107,13 @@ resource "google_bigquery_table" "divvy_stations" {
   schema = file("${path.module}/schema/divvy_stations_schema.json")
 }
 
+resource "google_bigquery_table" "clean_divvy_stations" {
+  dataset_id = google_bigquery_dataset.divvy_stations.dataset_id
+  table_id   = "clean_divvy_stations_data"
+
+  deletion_protection = false
+}
+
 ################# CTA BUS DATA
 
 resource "google_bigquery_dataset" "cta_bus_stations" {
@@ -100,4 +128,11 @@ resource "google_bigquery_table" "cta_bus_stations" {
   deletion_protection = false
 
   schema = file("${path.module}/schema/cta_bus_stations_schema.json")
+}
+
+resource "google_bigquery_table" "clean_cta_bus_stations" {
+  dataset_id = google_bigquery_dataset.cta_bus_stations.dataset_id
+  table_id   = "clean_cta_bus_stations"
+
+  deletion_protection = false
 }

@@ -99,7 +99,7 @@ def clean_chicago_business_licenses(request):
             'shake shack', 'burger king', 'taco bell', 'subway', 'wendy', 'popeyes'
         ]
         fine_dining_keywords = ['steakhouse', 'grill', 'bistro', 'chophouse', 'prime', 'fine dining']
-        cafe_keywords = ['coffee', 'cafe', 'espresso', 'tea']
+        cafe_keywords = ['coffee', 'cafe', 'espresso', 'tea', 'starbucks']
         bar_keywords = ['bar', 'pub', 'tavern', 'lounge']
 
         if any(kw in full_name for kw in fast_food_keywords):

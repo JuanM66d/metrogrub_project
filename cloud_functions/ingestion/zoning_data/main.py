@@ -67,6 +67,8 @@ def ingest_chicago_zoning(request):
         client.create_table(table)
         print(f"Created empty staging table {staging_table_id} with copied schema.")
 
+        time.sleep(2)
+
         # Insert rows into staging table in batches
         batch_size = 1000
         for i in range(0, len(all_rows), batch_size):
