@@ -18,7 +18,7 @@ view: master {
     description: "Unique identifier for the business license."
   }
 
-  dimension: doing_business_as_name {
+  dimension: business_name {
     type: string
     sql: ${TABLE}.doing_business_as_name ;;
     description: "The 'Doing Business As' (DBA) name of the business."
@@ -78,11 +78,6 @@ view: master {
     description: "Zip code of the business location."
   }
 
-  dimension: location_name {
-    type: string
-    sql: ${TABLE}.location ;;
-    description: "General location description (e.g., building name, floor)."
-  }
 
   dimension: location {
     # The 'location' type in LookML can be used for GEOGRAPHY or GEOMETRY types
@@ -156,7 +151,7 @@ view: master {
     description: "Unique identifier for the Divvy station."
   }
 
-  dimension: station_name {
+  dimension: divvy_station_name {
     type: string
     sql: ${TABLE}.station_name ;;
     description: "Name of the Divvy station."
