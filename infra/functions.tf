@@ -1,4 +1,41 @@
+################# MASTER TABLE
+
+resource "google_cloudfunctions_function" "master_table_function" {
+  name        = "create-master-table"
+  runtime     = "python310"
+  entry_point = "create_master_table"
+
+  source_archive_bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source_archive_object = google_storage_bucket_object.master_table_function_zip.name
+
+  trigger_http = true
+
+  available_memory_mb = 1024
+
+  environment_variables = {
+    FOOD_INSPECTIONS_TABLE     = "${google_bigquery_table.clean_food_inspections.project}.${google_bigquery_table.clean_food_inspections.dataset_id}.${google_bigquery_table.clean_food_inspections.table_id}"
+
+    FOOD_LICENSES_TABLE        = "${google_bigquery_table.clean_active_business_licenses.project}.${google_bigquery_table.clean_active_business_licenses.dataset_id}.${google_bigquery_table.clean_active_business_licenses.table_id}"
+
+    DIVVY_STATIONS_TABLE       = "${google_bigquery_table.clean_divvy_stations.project}.${google_bigquery_table.clean_divvy_stations.dataset_id}.${google_bigquery_table.clean_divvy_stations.table_id}"
+
+    POPULATION_COUNTS_TABLE    = "${google_bigquery_table.clean_population_counts.project}.${google_bigquery_table.clean_population_counts.dataset_id}.${google_bigquery_table.clean_population_counts.table_id}"
+
+    ZONING_DATA_TABLE          = "${google_bigquery_table.clean_zoning_data.project}.${google_bigquery_table.clean_zoning_data.dataset_id}.${google_bigquery_table.clean_zoning_data.table_id}"
+
+    BUS_STATIONS_TABLE         = "${google_bigquery_table.clean_cta_bus_stations.project}.${google_bigquery_table.clean_cta_bus_stations.dataset_id}.${google_bigquery_table.clean_cta_bus_stations.table_id}"
+
+    FOOT_TRAFFIC_TABLE         = var.foot_traffic_table
+
+    OUTPUT_TABLE               = "${google_bigquery_table.master_table_final.project}.${google_bigquery_table.master_table_final.dataset_id}.${google_bigquery_table.master_table_final.table_id}"
+
+    ZIP_BUCKET = google_storage_bucket.metrogrub_cloud_function_bucket.name
+    ZIP_PREFIX = "zip_shapes/"
+  }
+}
+
 ################# DEMOGRAPHICS DATA 
+
 resource "google_cloudfunctions_function" "demographics_function" {
   name        = "ingest-chicago-demographics"
   runtime     = "python310"

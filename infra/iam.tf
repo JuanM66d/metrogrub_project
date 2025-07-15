@@ -5,6 +5,17 @@ resource "google_service_account" "scheduler_invoker" {
   display_name = "Cloud Scheduler Invoker Service Account"
 }
 
+################# MASTER TABLE
+
+resource "google_cloudfunctions_function_iam_member" "master_table_invoker" {
+  project        = google_cloudfunctions_function.master_table_function.project
+  region         = google_cloudfunctions_function.master_table_function.region
+  cloud_function = google_cloudfunctions_function.master_table_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+}
+
 ################# DEMOGRAPHICS DATA
 
 resource "google_cloudfunctions_function_iam_member" "invoker" {

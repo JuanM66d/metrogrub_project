@@ -1,0 +1,15 @@
+numpy
+pandas
+skimpy
+seaborn
+jupyter
+geopandas
+db-dtypes
+missingno
+matplotlib
+pandas_gbq
+google-auth
+scikit-learn
+summarytools
+chart-studio
+google-cloud-bigquery

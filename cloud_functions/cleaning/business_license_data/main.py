@@ -114,7 +114,7 @@ def clean_chicago_business_licenses(request):
             return 'restaurant'  # fallback
 
     # Apply the categorization function to create the 'food_category' column
-    df['food_category'] = df.apply(categorize_food_place, axis=1)
+    df['category'] = df.apply(categorize_food_place, axis=1)
 
     # Generate normally distributed random fake location score
     mean = 50      # center of distribution
@@ -138,7 +138,7 @@ def clean_chicago_business_licenses(request):
             bigquery.SchemaField("address", "STRING"),
             bigquery.SchemaField("zip_code", "STRING"),
             bigquery.SchemaField("location", "GEOGRAPHY"),
-            bigquery.SchemaField("food_category", "STRING"),
+            bigquery.SchemaField("category", "STRING"),
             bigquery.SchemaField("fake_location_score", "INTEGER")
         ]
     )
