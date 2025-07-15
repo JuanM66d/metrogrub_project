@@ -14,6 +14,11 @@ datagroup: metrogrub_data_default_datagroup {
 
 persist_with: metrogrub_data_default_datagroup
 
+
+explore: master {
+  group_label: "metrogrub_data"
+}
+
 explore: foot_traffic {
   group_label: "metrogrub_data"
   from: yearly_average
