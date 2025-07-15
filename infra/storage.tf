@@ -6,6 +6,14 @@ resource "google_storage_bucket" "metrogrub_cloud_function_bucket" {
   force_destroy = true
 }
 
+################# MASTER TABLE
+
+resource "google_storage_bucket_object" "master_table_function_zip" {
+  name   = "master_table.zip"
+  bucket = google_storage_bucket.metrogrub_cloud_function_bucket.name
+  source = "../cloud_functions/master/master_table/master_table.zip"
+}
+
 ################# DEMOGRAPHICS DATA
 
 resource "google_storage_bucket_object" "demographics_function_zip" {

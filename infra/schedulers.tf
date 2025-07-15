@@ -1,3 +1,22 @@
+################# MASTER TABLE SCHEDULER
+
+resource "google_cloud_scheduler_job" "master_table_job" {
+    name             = "create-master-table-job"
+    description      = "Triggers the create-master-table-job function every 3 months"
+    schedule         = "0 6 1 1,4,7,10 *" # minute 0, 6AM, on the first day, of Jan, Apr, Jul, Oct (every 3 months)
+    time_zone        = "America/Chicago"
+
+    http_target {
+        http_method = "POST"
+        uri         = google_cloudfunctions_function.master_table_function.https_trigger_url
+
+        oidc_token {
+        service_account_email = google_service_account.scheduler_invoker.email
+        }
+    }
+}
+
+
 ################# DEMOGRAPHICS DATA SCHEDULER
 
 resource "google_cloud_scheduler_job" "demographics_job" {

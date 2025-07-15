@@ -1,3 +1,17 @@
+################# MASTER TABLE
+
+resource "google_bigquery_dataset" "master_table_final" {
+  dataset_id = "master_table_final"
+  location   = "US"
+}
+
+resource "google_bigquery_table" "master_table_final" {
+  dataset_id = google_bigquery_dataset.master_table_final.dataset_id
+  table_id   = "master_table_final"
+
+  deletion_protection = false
+}
+
 ################# DEMOGRAPHICS DATA
 
 resource "google_bigquery_dataset" "demographics" {

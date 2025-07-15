@@ -8,3 +8,8 @@ variable "region" {
   type        = string
   default     = "us-central1"
 }
+
+variable "foot_traffic_table" {
+  description = "Fully-qualified BigQuery table ID (project.dataset.table)"
+  type        = string
+}

@@ -16,7 +16,7 @@ def clean_cta_bus_stations(request):
 
     # Drop/rename some columns
     df = df.drop(['dir','pos','routesstpg'],axis=1)
-    df = df.rename(columns={'systemstop':'bus_stop_id'})
+    df = df.rename(columns={'systemstop':'bus_stop_id', 'public_nam': 'bus_stop'})
 
     # Cast as a point
     df['geometry'] = df.apply(
@@ -35,7 +35,7 @@ def clean_cta_bus_stations(request):
             bigquery.SchemaField("street", "STRING"),
             bigquery.SchemaField("cross_st", "STRING"),
             bigquery.SchemaField("city", "STRING"),
-            bigquery.SchemaField("public_nam", "STRING"),
+            bigquery.SchemaField("bus_stop", "STRING"),
             bigquery.SchemaField("geometry", "GEOGRAPHY")
         ],
         write_disposition="WRITE_TRUNCATE",  # Overwrites the table if it exists
