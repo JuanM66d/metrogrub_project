@@ -15,9 +15,21 @@ datagroup: metrogrub_data_default_datagroup {
 persist_with: metrogrub_data_default_datagroup
 
 explore: foot_traffic {
+  group_label: "metrogrub_data"
   from: yearly_average
 }
 
-explore: transportation {
+explore: cta_stations {
+  group_label: "metrogrub_data"
   from: clean_cta_bus_stations
+}
+
+explore: divvy_stations {
+  group_label: "metrogrub_data"
+  from:  clean_divvy_stations_data
+}
+
+explore: zoning {
+  group_label: "metrogrub_data"
+  from:  clean_zoning_data
 }
