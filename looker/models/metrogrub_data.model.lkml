@@ -24,6 +24,11 @@ explore: master2 {
   from: master_table_final_v2
 }
 
+explore: master_looker {
+  group_label: "metrogrub_data"
+  from: master_table_looker
+}
+
 explore: foot_traffic {
   group_label: "metrogrub_data"
   from: yearly_average
