@@ -37,19 +37,19 @@ view: master_table_final {
     sql_longitude: ${longitude} ;;
   }
   dimension: is_bus_stop {
-    type: yesno
+    type: number
     sql: ${TABLE}.is_bus_stop ;;
   }
   dimension: is_business {
-    type: yesno
+    type: number
     sql: ${TABLE}.is_business ;;
   }
   dimension: is_divvy_station {
-    type: yesno
+    type: number
     sql: ${TABLE}.is_divvy_station ;;
   }
   dimension: is_food {
-    type: yesno
+    type: number
     sql: ${TABLE}.is_food ;;
   }
   dimension: latitude {
