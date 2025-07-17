@@ -106,44 +106,10 @@ view: master_table_final {
     drill_fields: [station_name, business_name]
   }
 
-# Add this entire block to your view file
-
-  parameter: location_type_selector {
-    group_label: "Filters"
-    label: "Select a Location Type"
-    description: "Filter the report to a specific type of location. This filter is required."
-    type: unquoted
-    allowed_value: {
-      label: "Business"
-      value: "is_business"
-    }
-    allowed_value: {
-      label: "Food"
-      value: "is_food"
-    }
-    allowed_value: {
-      label: "Divvy Station"
-      value: "is_divvy_station"
-    }
-    allowed_value: {
-      label: "Bus Stop"
-      value: "is_bus_stop"
-    }
+  dimension: random_sort {
+    type: number
+    sql: RAND() ;;
+    hidden: yes
   }
 
-  dimension: is_location_type_selected {
-    # This dimension is hidden from users but powers the filter logic
-    hidden: no
-    type: yesno
-    sql:
-    -- This CASE statement checks which option the user picked in the parameter
-    -- and then checks the corresponding 'yesno' dimension.
-    CASE
-      WHEN {% parameter location_type_selector %} = 'is_business' THEN ${is_business}
-      WHEN {% parameter location_type_selector %} = 'is_food' THEN ${is_food}
-      WHEN {% parameter location_type_selector %} = 'is_divvy_station' THEN ${is_divvy_station}
-      WHEN {% parameter location_type_selector %} = 'is_bus_stop' THEN ${is_bus_stop}
-      ELSE FALSE -- Default case
-    END ;;
-  }
 }
