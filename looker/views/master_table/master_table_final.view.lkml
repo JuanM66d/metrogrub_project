@@ -24,6 +24,7 @@ view: master_table_final {
     sql: ${TABLE}.doing_business_as_name ;;
   }
   dimension: fake_location_score {
+    label: "Location Score"
     type: number
     sql: ${TABLE}.fake_location_score ;;
   }
