@@ -1,4 +1,4 @@
-view: master {
+view: master_table_final {
   sql_table_name: `purple-25-gradient-20250605.master_table_final.master_table_final` ;;
 
   dimension: address {
