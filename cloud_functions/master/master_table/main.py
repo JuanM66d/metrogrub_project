@@ -64,13 +64,13 @@ def create_master_table(request):
     food_inspection_df['is_divvy_station'] = 0
 
     # Append point type data sources together
-    combined_df = pd.concat([food_license_df, food_inspection_df, bus_station_df, divvy_stations_df], ignore_index=True)
+    draft_df = pd.concat([food_license_df, food_inspection_df, bus_station_df, divvy_stations_df], ignore_index=True)
     # Fill missing 'location' with a placeholder WKT string
-    combined_df['location'] = combined_df['location'].fillna("POINT(0 0)")
+    draft_df['location'] = draft_df['location'].fillna("POINT(0 0)")
     # wrap the DataFrame into a GeoDataFrame that supports spatial joins, distance calculations, and exporting to BigQuery as a GEOGRAPHY column.
-    combined_df['geometry'] = combined_df['location'].apply(wkt_loads)
+    draft_df['geometry'] = draft_df['location'].apply(wkt_loads)
     # Convert to GeoDataFrame
-    combined_gdf = gpd.GeoDataFrame(combined_df, geometry='geometry', crs='EPSG:4326')
+    combined_gdf = gpd.GeoDataFrame(draft_df, geometry='geometry', crs='EPSG:4326')
 
 
     # Convert geometry string to actual geometry objects, then convert to GeoDataFrame
@@ -78,7 +78,12 @@ def create_master_table(request):
     zoning_gdf = gpd.GeoDataFrame(zoning_data_df, geometry='geometry', crs='EPSG:4326')
 
     # Now we can perform a spatial join to combine the zoning data with the combined GeoDataFrame
-    combined_gdf = gpd.sjoin(combined_gdf, zoning_gdf[['geometry', 'zone_class']], how='left', predicate='within')
+    combined_gdf = gpd.sjoin(
+        combined_gdf, 
+        zoning_gdf[['geometry', 'zone_class']], 
+        how='left', 
+        predicate='within'
+    )
 
     # Clean up zip_code formatting
     combined_gdf['zip_code'] = combined_gdf['zip_code'].astype(str).str.zfill(5)
@@ -109,15 +114,15 @@ def create_master_table(request):
     # Assign the nearest foot traffic score
     combined_gdf['foot_traffic_score'] = foot_traffic_gdf.iloc[indices]['yearly_average_foot_traffic'].values
 
-    # some final cleaning before upload
-    combined_gdf = combined_gdf.drop_duplicates(subset=['address'])
+    # some final organization before upload
     combined_gdf = combined_gdf.drop(columns=['index_right', 
-                                            'license_id',
                                             'legal_name',
                                             'business_activity',
                                             'business_activity_id',
                                             'license_description',
                                             'facility_type',
+                                            'city',
+                                            'state',
                                             'bus_stop_id',
                                             'street',
                                             'cross_st',
@@ -127,6 +132,7 @@ def create_master_table(request):
     column_order = [
         'is_food',
         'is_business',
+        'license_id',
         'doing_business_as_name',
         'category',
         'fake_location_score',
@@ -136,14 +142,12 @@ def create_master_table(request):
         'longitude',
         'latitude',
         'address',
-        'city',
-        'state',
         'zip_code',
         'is_bus_stop',
         'bus_stop',
         'is_divvy_station',
         'station_name',
-        'total_docks'
+        'total_docks',
         'population_total',
         'population_18_to_29',
         'population_30_to_39',
@@ -152,6 +156,19 @@ def create_master_table(request):
     ]
 
     combined_gdf = combined_gdf[column_order]
+
+    # some final cleaning
+
+    # Divide between businesses/restaurants and bus/divvy station
+    to_clean = combined_gdf[combined_gdf['doing_business_as_name'].notna()]
+    not_to_clean = combined_gdf[combined_gdf['doing_business_as_name'].isna()]
+
+    # Deduplicate only the businesses/restaurants rows
+    # this avoids removing the bus/divvy stations that dont have 'doing_business_as_name'
+    to_clean = to_clean.drop_duplicates(subset=['doing_business_as_name', 'address'], keep='first')
+
+    # Combine them back together
+    final_gdf = pd.concat([to_clean, not_to_clean], ignore_index=True)
     
     # Define the job config
     job_config = bigquery.LoadJobConfig(
@@ -160,10 +177,10 @@ def create_master_table(request):
     )
 
     # Upload the DataFrame to BigQuery
-    job = client.load_table_from_dataframe(combined_gdf, master_table, job_config=job_config)
+    job = client.load_table_from_dataframe(final_gdf, master_table, job_config=job_config)
 
     # Wait for the job to complete
     job.result()
 
-    print(f"✅ Upload completed. {len(combined_df)} rows written to {master_table}")
-    return f"Successfully uploaded {len(combined_df)} rows to BigQuery."
+    print(f"✅ Upload completed. {len(final_gdf)} rows written to {master_table}")
+    return f"Successfully uploaded {len(final_gdf)} rows to BigQuery."
