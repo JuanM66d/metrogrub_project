@@ -1,0 +1,64 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+build
+develop-eggs
+dist
+downloads
+eggs
+.eggs
+lib
+lib64
+parts
+sdist
+var
+wheels
+*.egg-info
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv
+env
+ENV
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Terraform
+infra/
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Cloud functions
+cloud_functions/
+
+# Scripts
+scripts/
+
+# Documentation
+README.md
+*.md
+
+# Docker
+Dockerfile*
+docker-compose* 

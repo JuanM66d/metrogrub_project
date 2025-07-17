@@ -119,6 +119,7 @@ resource "google_cloudfunctions_function" "business_licenses_function" {
 
   trigger_http = true
   available_memory_mb = 1024
+  timeout = 180 # 3 minutes
 
   environment_variables = {
     "BIGQUERY_TABLE" = google_bigquery_table.active_business_licenses.id
