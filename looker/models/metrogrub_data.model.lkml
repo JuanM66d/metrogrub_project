@@ -17,6 +17,7 @@ persist_with: metrogrub_data_default_datagroup
 
 explore: master {
   group_label: "metrogrub_data"
+  from: master_table_final_v2
 }
 
 explore: foot_traffic {
