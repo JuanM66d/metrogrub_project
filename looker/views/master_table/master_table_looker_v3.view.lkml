@@ -62,9 +62,9 @@ view: master_table_looker_v3 {
     sql: ${TABLE}.license_id ;;
   }
   dimension: location {
-    label: "Location Score"
-    type: number
-    sql: ${TABLE}.fake_location_score ;;
+    type: location
+    sql_latitude: ${latitude};;
+    sql_longitude: ${longitude} ;;
   }
   dimension: longitude {
     type: number
