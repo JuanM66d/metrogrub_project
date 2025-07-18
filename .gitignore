@@ -5,3 +5,4 @@ data_cleaning/data_exports/
 data_cleaning/data_outputs/
 data_cleaning/tmp/
 *.json
+streamlit/venv/
