@@ -11,6 +11,13 @@ docker-compose up --build
 
 2. Open your browser to `http://localhost:8501`
 
+
+#### Deployment
+```bash
+./deploy_streamlit.sh
+```
+This will update gcloud run instance with updated streamlit and docker configuration
+
 ## Environment Variables
 
 - `STREAMLIT_SERVER_PORT`: Port for the Streamlit server (default: 8501)

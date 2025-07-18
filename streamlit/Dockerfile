@@ -25,6 +25,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY streamlit_app.py .
 
+# Copy Streamlit configuration
+COPY .streamlit/ .streamlit/
+
 # Create a non-root user
 RUN useradd -m -u 1000 streamlit && chown -R streamlit:streamlit /app
 USER streamlit
@@ -35,5 +38,5 @@ EXPOSE 8501
 # Health check
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-# Run streamlit app
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"] 
+# Run streamlit app with file watching enabled
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.fileWatcherType=poll", "--server.runOnSave=true"] 
