@@ -17,13 +17,13 @@ def clean_divvy_station_data(request):
     print(f"Retrieved {len(df)} rows from {input_table}")
 
     # rename columns and drop unnecessary ones
-    df = df.rename(columns={'id':'divvy_station_id'})
+    df = df.rename(columns={'id':'divvy_station_id', 'station_name':'entity_name'})
     df = df.drop(columns=['short_name'])
     # Keep only rows where status is 'In Service'
     df = df[df['status'] == 'In Service']
 
-    # Create WKT 'geometry' column using existing float columns
-    df['geometry'] = df.apply(
+    # Create WKT 'location' column using existing coordinate columns
+    df['location'] = df.apply(
         lambda row: f"POINT({row['longitude']} {row['latitude']})"
         if pd.notnull(row['longitude']) and pd.notnull(row['latitude']) else None,
         axis=1
@@ -34,15 +34,14 @@ def clean_divvy_station_data(request):
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,  # Overwrites the table if it exists
         schema = [
             bigquery.SchemaField("divvy_station_id", "STRING"),
-            bigquery.SchemaField("station_name", "STRING"),
+            bigquery.SchemaField("entity_name", "STRING"),
             bigquery.SchemaField("total_docks", "INTEGER"),
             bigquery.SchemaField("docks_in_service", "INTEGER"),
             bigquery.SchemaField("status", "STRING"),
             bigquery.SchemaField("latitude", "FLOAT"),
             bigquery.SchemaField("longitude", "FLOAT"),
             bigquery.SchemaField("location_type", "STRING"),
-            bigquery.SchemaField("location_type", "STRING"),
-            bigquery.SchemaField("geometry", "GEOGRAPHY")
+            bigquery.SchemaField("location", "GEOGRAPHY")
         ]
     )
 

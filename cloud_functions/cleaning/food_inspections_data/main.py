@@ -30,7 +30,7 @@ def clean_chicago_food_inspections(request):
 
     df = df[col_to_keep]
     # Rename columns for consistency
-    df = df.rename(columns={'dba_name': 'doing_business_as_name', 'zip': 'zip_code'})
+    df = df.rename(columns={'dba_name': 'entity_name', 'zip': 'zip_code'})
     # remove rows where state is not IL
     df = df[df['state'] == 'IL']
     # Remove rows where location is null
@@ -109,7 +109,9 @@ def clean_chicago_food_inspections(request):
     # Define the job config
     job_config = bigquery.LoadJobConfig(
         schema = [
-            bigquery.SchemaField("doing_business_as_name", "STRING"),
+            bigquery.SchemaField("is_food", "INTEGER"),
+            bigquery.SchemaField("is_business", "INTEGER"),
+            bigquery.SchemaField("entity_name", "STRING"),
             bigquery.SchemaField("facility_type", "STRING"),
             bigquery.SchemaField("category", "STRING"),
             bigquery.SchemaField("address", "STRING"),
