@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.title("MetroGrub Site Selection 🍔")
+st.title("MetroGrub Site Selection")
 st.divider()
 
 # Embed URLs for each Looker Studio map
