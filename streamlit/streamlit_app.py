@@ -17,9 +17,26 @@ st.set_page_config(
 st.title("MetroGrub Site Selection 🍔")
 st.divider()
 
-components.iframe("https://panderasystems.looker.com/embed/dashboards/734", height=1000)
+# Embed URLs for each Looker Studio map
+map_url_1 = "https://panderasystems.looker.com/embed/dashboards/734"
+map_url_2 = "https://panderasystems.looker.com/embed/dashboards/2490"
 
-components.iframe("https://panderasystems.looker.com/datascope/ab56065b-5a38-42b0-93a1-a1e49b7e072f", height=1000)
+# Create tabs
+tab1, tab2 = st.tabs(["🍕 Restaurant Heatmap", "🏢 Business Zones"])
+
+with tab1:
+    st.subheader("Map 1: Restaurant Heatmap")
+    components.html(
+        f'<iframe src="{map_url_1}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
+        height=820,
+    )
+
+with tab2:
+    st.subheader("Map 2: Business Zones")
+    components.html(
+        f'<iframe src="{map_url_2}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
+        height=820,
+    )
 
 
 # Footer
