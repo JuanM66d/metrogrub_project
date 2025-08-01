@@ -16,10 +16,10 @@ def clean_cta_bus_stations(request):
 
     # Drop/rename some columns
     df = df.drop(['dir','pos','routesstpg'],axis=1)
-    df = df.rename(columns={'systemstop':'bus_stop_id', 'public_nam': 'bus_stop'})
+    df = df.rename(columns={'systemstop':'bus_stop_id', 'public_nam': 'entity_name'})
 
     # Cast as a point
-    df['geometry'] = df.apply(
+    df['location'] = df.apply(
         lambda row: f"POINT({row['longitude']} {row['latitude']})" 
         if pd.notnull(row['longitude']) and pd.notnull(row['latitude']) 
         else None,
@@ -35,8 +35,8 @@ def clean_cta_bus_stations(request):
             bigquery.SchemaField("street", "STRING"),
             bigquery.SchemaField("cross_st", "STRING"),
             bigquery.SchemaField("city", "STRING"),
-            bigquery.SchemaField("bus_stop", "STRING"),
-            bigquery.SchemaField("geometry", "GEOGRAPHY")
+            bigquery.SchemaField("entity_name", "STRING"),
+            bigquery.SchemaField("location", "GEOGRAPHY")
         ],
         write_disposition="WRITE_TRUNCATE",  # Overwrites the table if it exists
     )

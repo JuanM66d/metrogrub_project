@@ -127,13 +127,16 @@ def create_master_table(request):
                                             'street',
                                             'cross_st',
                                             'divvy_station_id',
+                                            'total_docks'
                                             ])
 
     column_order = [
         'is_food',
         'is_business',
+        'is_bus_stop',
+        'is_divvy_station',
         'license_id',
-        'doing_business_as_name',
+        'entity_name',
         'category',
         'fake_location_score',
         'foot_traffic_score',
@@ -143,11 +146,6 @@ def create_master_table(request):
         'latitude',
         'address',
         'zip_code',
-        'is_bus_stop',
-        'bus_stop',
-        'is_divvy_station',
-        'station_name',
-        'total_docks',
         'population_total',
         'population_18_to_29',
         'population_30_to_39',
@@ -160,12 +158,12 @@ def create_master_table(request):
     # some final cleaning
 
     # Divide between businesses/restaurants and bus/divvy station
-    to_clean = combined_gdf[combined_gdf['doing_business_as_name'].notna()]
-    not_to_clean = combined_gdf[combined_gdf['doing_business_as_name'].isna()]
+    to_clean = combined_gdf[combined_gdf['address'].notna()] # businesses/restaurants have an adress
+    not_to_clean = combined_gdf[combined_gdf['address'].isna()] # bus/divvy stations dont have an address
 
     # Deduplicate only the businesses/restaurants rows
-    # this avoids removing the bus/divvy stations that dont have 'doing_business_as_name'
-    to_clean = to_clean.drop_duplicates(subset=['doing_business_as_name', 'address'], keep='first')
+    # this avoids removing the bus/divvy stations that dont have 'address'
+    to_clean = to_clean.drop_duplicates(subset=['entity_name', 'address'], keep='first')
 
     # Combine them back together
     final_gdf = pd.concat([to_clean, not_to_clean], ignore_index=True)
