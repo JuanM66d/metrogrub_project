@@ -21,7 +21,7 @@ view: master_table_final {
   }
   dimension: business_name {
     type: string
-    sql: ${TABLE}.doing_business_as_name ;;
+    sql: ${TABLE}.entity_name ;;
   }
   dimension: fake_location_score {
     label: "Location Score"

@@ -19,42 +19,14 @@ explore: master {
   from: master_table_final
 }
 
-explore: master2 {
+explore: grid_zones {
   group_label: "metrogrub_data"
-  from: master_table_final_v2
+  from: grid_zones
 }
 
-explore: master_looker {
-  group_label: "metrogrub_data"
-  from: master_table_looker
-}
 
-explore: master_looker2 {
-  group_label: "metrogrub_data"
-  from: master_table_looker_v2
-}
-
-explore: master_looker3 {
-  group_label: "metrogrub_data"
-  from: master_table_looker_v3
-}
-
-explore: foot_traffic {
-  group_label: "metrogrub_data"
-  from: yearly_average
-}
-
-explore: cta_stations {
-  group_label: "metrogrub_data"
-  from: clean_cta_bus_stations
-}
-
-explore: divvy_stations {
-  group_label: "metrogrub_data"
-  from:  clean_divvy_stations_data
-}
-
-explore: zoning {
-  group_label: "metrogrub_data"
-  from:  clean_zoning_data
+map_layer: location_zones {
+  file: "map.topojson"
+  format: "topojson"
+  property_key: "zone_id"
 }

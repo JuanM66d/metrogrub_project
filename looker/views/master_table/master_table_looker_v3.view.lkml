@@ -23,7 +23,7 @@ view: master_table_looker_v3 {
   }
   dimension: doing_business_as_name {
     type: string
-    sql: ${TABLE}.doing_business_as_name ;;
+    sql: ${TABLE}.entity_name ;;
   }
   dimension: fake_location_score {
     type: number
