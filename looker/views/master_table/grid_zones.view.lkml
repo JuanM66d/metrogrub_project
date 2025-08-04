@@ -2,22 +2,22 @@ view: grid_zones {
   sql_table_name: `purple-25-gradient-20250605.master_table_final.grid_zones` ;;
 
   dimension: avg_location_score {
-    label: "Average Location Score"
     type: number
     sql: ${TABLE}.avg_location_score ;;
+    label: "Average Location Score: "
   }
   dimension: bus_stop_count {
-    label: "Bus Stops:"
+    label: "Bus Stops: "
     type: number
     sql: ${TABLE}.bus_stop_count ;;
   }
   dimension: business_count {
-    label: "Businesses:"
+    label: "Businesses: "
     type: number
     sql: ${TABLE}.business_count ;;
   }
   dimension: divvy_station_count {
-    label: "Divvy Stations:"
+    label: "Divvy Stations: "
     type: number
     sql: ${TABLE}.divvy_station_count ;;
   }
@@ -32,7 +32,7 @@ view: grid_zones {
     sql: ${TABLE}.lon_grid ;;
   }
   dimension: restaurant_count {
-    label: "Restaurants"
+    label: "Restaurants: "
     type: number
     sql: ${TABLE}.restaurant_count ;;
   }
@@ -47,12 +47,6 @@ view: grid_zones {
     sql: zone_id ;;
     map_layer_name: location_zones
   }
-
-  measure: avg_loc_score {
-    type: number
-    sql: ${TABLE}.avg_location_score ;;
-  }
-
 
   measure: count {
     type: count
