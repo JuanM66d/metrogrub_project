@@ -4,3 +4,4 @@ numpy>=1.26.0
 plotly>=5.17.0
 google-cloud-bigquery>=3.11.4
 google-auth>=2.22.0
+google-cloud-geminidataanalytics

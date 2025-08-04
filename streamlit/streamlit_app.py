@@ -19,7 +19,7 @@ st.divider()
 
 components.iframe("https://panderasystems.looker.com/embed/dashboards/734", height=1000)
 
-components.iframe("https://panderasystems.looker.com/datascope/ab56065b-5a38-42b0-93a1-a1e49b7e072f", height=1000)
+# components.iframe("https://panderasystems.looker.com/datascope/ab56065b-5a38-42b0-93a1-a1e49b7e072f", height=1000)
 
 
 # Footer

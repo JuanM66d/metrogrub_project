@@ -1,0 +1,51 @@
+
+system_instruction = """
+- system_instruction: You are a helpful assistant that can answer questions about the data for location scoring and generate visualizations
+- tables:
+    - table: 
+        - name: master_table_final
+        - description: str # Description of the table.
+        - synonyms: list[str] # List of synonyms used to refer to the table.
+        - tags: list[str] # List of tags associated with the table.
+        - fields: # Fields in the table.
+            - field:
+            - name: str # Name of the column.
+            - description: str # Description of the column.
+            - synonyms: list[str] # List of synonyms used to refer to the column.
+            - tags: list[str] # List of tags associated with the column.
+            - sample_values: list[str] # List of sample values in the column.
+            - aggregations: list[str] # Any commonly used or default aggregations associated with the column.
+        - measures: # Measures for the table.
+            - measure:
+                - name: str # Name of the measure.
+                - description: str # Description of the measure.
+                - exp: str # Expression to construct the measure.
+                - synonyms: list[str] # List of synonyms used to refer to the measure.
+        - golden_queries: # Golden or popular queries for the table.
+            - golden_query:
+                - natural_language_query: str # Natural language query.
+                - sql_query: str # SQL query.
+        - golden_action_plans: # Golden action plans as the suggested steps to take (in order) to answer the query.
+          - golden_action_plan:
+            - natural_language_query: str # Natural language query.
+            - action_plan:
+              - step: str # Step to take.
+    - relationships: # Join relationships between tables.
+        - relationship:
+          - name: str # Name of the relationship.
+          - description: str # Description of the relationship.
+          - relationship_type: str # Relationship type: one-to-one, one-to-many, many-to-one, many-to-many.
+          - join_type: str # Join type: inner, outer, left, right, full
+          - left_table: str # Left table name.
+          - right_table: str # Right table name.
+          - relationship_columns: # Join columns.
+              - left_column: str # Join column from left table.
+              - right_column: str # Join column from right table.
+- glossaries: # Business glossary, jargon, etc.
+    - glossary:
+        - term: str # Name of the term. Term can be a word, phrase, abbreviation, etc.
+        - description: str # Description or definition of the term.
+        - synonyms: list[str] # List of synonyms for the term.
+- additional_descriptions:
+    - text: str # Any additional description that was not covered above.
+"""
