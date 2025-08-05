@@ -1,10 +1,16 @@
+from pandas.core.ops.docstrings import key
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import streamlit.components.v1 as components
+import sys
+import os
+from sidebar_chatbot import sidebar_chat
 
-from datetime import datetime, timedelta
+
+# Add the chatbot directory to the path
+sys.path.append(os.path.join(os.path.dirname(__file__), 'chatbot'))
 
 # Page configuration
 st.set_page_config(
@@ -14,12 +20,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Main content
 st.title("MetroGrub Site Selection 🍔")
 st.divider()
 
-components.iframe("https://panderasystems.looker.com/embed/dashboards/734", height=1000)
+sidebar_chat()
 
-# components.iframe("https://panderasystems.looker.com/datascope/ab56065b-5a38-42b0-93a1-a1e49b7e072f", height=1000)
+components.iframe("https://panderasystems.looker.com/embed/dashboards/734", height=1000)
 
 
 # Footer

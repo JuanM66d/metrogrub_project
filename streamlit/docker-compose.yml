@@ -7,8 +7,7 @@ services:
       - STREAMLIT_SERVER_PORT=8501
       - STREAMLIT_SERVER_ADDRESS=0.0.0.0
     volumes:
-      - ./streamlit_app.py:/app/streamlit_app.py
-      - ./.streamlit:/app/.streamlit
+      - ./src:/app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]

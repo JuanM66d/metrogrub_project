@@ -5,3 +5,10 @@ plotly>=5.17.0
 google-cloud-bigquery>=3.11.4
 google-auth>=2.22.0
 google-cloud-geminidataanalytics
+streamlit-js-eval
+google-cloud-geminidataanalytics
+ipython
+pandas
+protobuf
+proto-plus
+altair

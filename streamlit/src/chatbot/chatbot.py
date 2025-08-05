@@ -4,6 +4,15 @@ from util import show_message
 from instructions import system_instruction 
 
 
+class Chatbot:
+    def __init__(self):
+        self.data_agent_client = geminidataanalytics.DataAgentServiceClient()
+        self.data_chat_client = geminidataanalytics.DataChatServiceClient()
+        self.location = "global"
+        self.billing_project = "purple-25-gradient-20250605"
+        self.bq_project_id = "bigquery-public-data"
+        
+
 data_agent_client = geminidataanalytics.DataAgentServiceClient()
 data_chat_client = geminidataanalytics.DataChatServiceClient()
 
@@ -51,6 +60,7 @@ published_context.datasource_references = datasource_references
 published_context.options.analysis.python.enabled = True
 
 data_agent_id = f"agent_{uuid.uuid4().hex[:8]}"
+
 
 try: 
     request = geminidataanalytics.GetDataAgentRequest(
@@ -113,6 +123,7 @@ conversation_reference = geminidataanalytics.ConversationReference(
 
 print("🤖 Chatbot ready! Type 'exit' to quit.")
 print("=" * 50)
+
 
 while True: 
     try:
