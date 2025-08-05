@@ -14,25 +14,24 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.title("MetroGrub Site Selection___")
-st.divider()
+st.title("MetroGrub Site Selection 🍔")
 
 # Embed URLs for each Looker Studio map
-map_url_1 = "https://panderasystems.looker.com/embed/dashboards/734"
-map_url_2 = "https://panderasystems.looker.com/embed/dashboards/2490"
+map_url_1 = "https://panderasystems.looker.com/embed/dashboards/2490"
+map_url_2 = "https://panderasystems.looker.com/embed/dashboards/734"
 
 # Create tabs
-tab1, tab2 = st.tabs(["🍕 Restaurant Heatmap", "🏢 Business Zones"])
+tab1, tab2 = st.tabs(["🗺️ Location Zone Map", "📍 Location Point Map"])
 
 with tab1:
-    st.subheader("Map 1: Restaurant Heatmap")
+    st.subheader("Analyze Average Scores by Zone")
     components.html(
         f'<iframe src="{map_url_1}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
         height=820,
     )
 
 with tab2:
-    st.subheader("Map 2: Business Zones")
+    st.subheader("Competitor Locations & Businesses")
     components.html(
         f'<iframe src="{map_url_2}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
         height=820,
