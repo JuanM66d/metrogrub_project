@@ -4,3 +4,4 @@ pandas
 protobuf
 proto-plus
 altair
+dotenv

@@ -2,6 +2,16 @@
 
 A basic Streamlit dashboard for visualizing MetroGrub analytics data including food inspections, demographics, business licenses, and foot traffic patterns.
 
+
+### SETUP for chatbot
+
+Add .env file to streamlit/chatbot/
+
+LOOKER_CLIENT_ID = "YOUR CLIENT ID HERE"  
+LOOKER_CLIENT_SECRET = "YOUR CLIENT SECRET HERE"  
+
+https://cloud.google.com/looker/docs/api-auth 
+
 ### Local Dev Using Docker
 
 1. Build and run with Docker Compose:
