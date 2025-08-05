@@ -70,24 +70,25 @@ def clean_chicago_business_licenses(request):
         name = str(row.get('entity_name', '')).lower()
         text = f"{desc} {name}"  # combine both fields
 
-        all_food_keywords = ['raising cane', '7-eleven', 'pizza hut', 'wingstop', 'jimmy johns', 'dunkin',
+        all_food_keywords = ['panda express','raising cane', 'pizza hut', 'wingstop', 'jimmy johns', 'dunkin',
             'potbelly', 'chick-fil-a', 'dominos', 'mcdonald', 'kentucky', 'kfc',
             'shake shack', 'burger king', 'taco bell', 'subway', 'wendy', 'popeyes', 'steak','steakhouse', 
             'bistro', 'chophouse', 'prime', 'fine dining', 'coffee', 'cafe', 'espresso', 'tea', 
             'starbucks', 'bakery', 'pastry', 'patisserie', 'bar', 'pub', 'tavern', 'lounge', 
-            'brewery', 'wine', 'cocktail', 'taproom', 'food', 'restaurant']
+            'brewery', 'wine', 'cocktail', 'taproom', 'restaurant', 'pizza', 'burger']
         fast_food_keywords = [
-            'raising cane', '7-eleven', 'pizza hut', 'wingstop', 'jimmy johns', 'dunkin',
+            'raising cane', 'pizza hut', 'wingstop', 'jimmy johns', 'dunkin',
             'potbelly', 'chick-fil-a', 'dominos', 'mcdonald', 'kentucky', 'kfc',
-            'shake shack', 'burger king', 'taco bell', 'subway', 'wendy', 'popeyes'
+            'shake shack', 'burger king', 'taco bell', 'subway', 'wendy', 'popeyes', 'panda express'
         ]
         fine_dining_keywords = ['steak', 'steakhouse', 'bistro', 'chophouse', 'prime', 'fine dining']
         cafe_keywords = ['coffee', 'cafe', 'espresso', 'tea', 'starbucks', 'bakery', 'pastry', 'patisserie']
-        bar_keywords = ['bar', 'pub', 'tavern', 'lounge', 'brewery', 'wine', 'cocktail', 'taproom']
+        bar_keywords = ['bar', 'pub', 'tavern', 'lounge', 'brewery', 'wine', 'cocktail', 'taproom', 'beer']
 
 
         text = text.lower()
-        if any(kw in text for kw in ['grocery', 'market', 'liquor', 'retail', 'drug', 'drug store', 'convenience', 'supermarket', 'wholesale']):
+
+        if any(kw in text for kw in ['grocery', 'market', 'liquor', 'store', 'drug', 'drug store', 'convenience', 'supermarket', 'wholesale', '7-eleven', 'cvs', 'walgreens']):
             return 'retail_grocery'
         elif any(kw in text for kw in ['school', 'college', 'university']):
             return 'school'
@@ -101,8 +102,7 @@ def clean_chicago_business_licenses(request):
             return 'hospitality'
         elif any(kw in text for kw in ['church', 'temple', 'mosque', 'synagogue']):
             return 'religious'
-
-        if any(kw in text for kw in all_food_keywords):
+        elif any(kw in text for kw in all_food_keywords):
             if any(kw in text for kw in fast_food_keywords):
                 return 'fast_food'
             elif any(kw in text for kw in fine_dining_keywords):
@@ -113,8 +113,8 @@ def clean_chicago_business_licenses(request):
                 return 'bar'
             else:
                 return 'restaurant'
-        else:
-            return 'Other'
+        else: 
+            return 'other'
 
     # Apply the categorization function to create the 'food_category' column
     df['category'] = df.apply(categorize_food_place, axis=1)
