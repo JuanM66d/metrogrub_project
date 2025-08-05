@@ -4,6 +4,11 @@ view: grid_zones {
   dimension: avg_location_score {
     type: number
     sql: ${TABLE}.avg_location_score ;;
+    label: "Unscaled Location Score"
+  }
+  dimension: rescaled_location_score {
+    type: number
+    sql: ${TABLE}.rescaled_score ;;
     label: "Average Location Score: "
   }
   dimension: bus_stop_count {
