@@ -7,7 +7,7 @@ view: master_table_final_v3 {
   }
   dimension: category {
     type: string
-    sql: ${TABLE}.category ;;
+    sql: INITCAP(REPLACE(${TABLE}.category, '_', ' '));;
   }
   dimension: entity_name {
     type: string

@@ -56,4 +56,9 @@ view: grid_zones {
   measure: count {
     type: count
   }
+  measure: total_bus_stops {
+    type: sum
+    sql: ${bus_stop_count} ;;
+  }
+
 }
