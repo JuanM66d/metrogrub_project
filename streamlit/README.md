@@ -5,12 +5,34 @@ A basic Streamlit dashboard for visualizing MetroGrub analytics data including f
 
 ### SETUP for chatbot
 
-Add .env file to streamlit/chatbot/
+#### Google Cloud Authentication
 
-LOOKER_CLIENT_ID = "YOUR CLIENT ID HERE"  
-LOOKER_CLIENT_SECRET = "YOUR CLIENT SECRET HERE"  
+Before running the application, you need to set up Google Cloud authentication:
 
-https://cloud.google.com/looker/docs/api-auth 
+1. **Install Google Cloud CLI** (if not already installed):
+   ```bash
+   # macOS
+   brew install google-cloud-sdk
+   
+   # Other platforms: https://cloud.google.com/sdk/docs/install
+   ```
+
+2. **Authenticate with Google Cloud**:
+   ```bash
+   gcloud auth application-default login
+   ```
+   This will open a browser window for authentication and save credentials to `~/.config/gcloud/application_default_credentials.json`
+
+   **Note for Team Members**: The docker-compose.yml uses `${HOME}/.config/gcloud/application_default_credentials.json` which automatically resolves to each developer's home directory.
+
+3. **Set up environment variables**:
+   Create a `.env` file in the `streamlit/` directory with:
+   ```
+   LOOKER_CLIENT_ID=your_looker_client_id_here
+   LOOKER_CLIENT_SECRET=your_looker_client_secret_here
+   ```
+
+For Looker API credentials setup, see: https://cloud.google.com/looker/docs/api-auth 
 
 ### Local Dev Using Docker
 

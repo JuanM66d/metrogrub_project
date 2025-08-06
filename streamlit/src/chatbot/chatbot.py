@@ -1,8 +1,12 @@
-from google.cloud import geminidataanalytics
+import streamlit as st
 import uuid
-from util import show_message
-from instructions import system_instruction
+import os # You were using os.getenv, so we need to import os
 import dotenv
+from google.cloud import geminidataanalytics
+
+# I'm assuming these are in your project structure
+from .util import show_message 
+from .instructions import system_instruction
 
 dotenv.load_dotenv()
 
@@ -12,173 +16,137 @@ class Chatbot:
         self.data_chat_client = geminidataanalytics.DataChatServiceClient()
         self.location = "global"
         self.billing_project = "purple-25-gradient-20250605"
-        self.bq_project_id = "bigquery-public-data"
+
         
-
-    def init_chatbot(self):
-        data_agent_client = geminidataanalytics.DataAgentServiceClient()
-        data_chat_client = geminidataanalytics.DataChatServiceClient()
-
-        location = "global"
-
-        billing_project = "purple-25-gradient-20250605" 
-
-        bq_project_id = "bigquery-public-data"  # @param {type:"string"}
-        bq_dataset_id = "faa"  # @param {type:"string"}
-        bq_table_id = "us_airports"  # @param {type:"string"}
-
-
-        looker_client_id = os.getenv("LOOKER_CLIENT_ID")  # @param {type:"string"}
-        looker_client_secret = os.getenv("LOOKER_CLIENT_SECRET")  # @param {type:"string"}
-        looker_instance_uri = "https://panderasystems.looker.com/"  # @param {type:"string"}
-        lookml_model = "metrogrub_data"  # @param {type:"string"}
-        explore = "master"  # @param {type:"string"}
+        # Datasource and credentials setup
+        looker_client_id = os.getenv("LOOKER_CLIENT_ID")
+        looker_client_secret = os.getenv("LOOKER_CLIENT_SECRET")
+        looker_instance_uri = "https://panderasystems.looker.com/"
+        lookml_model = "metrogrub_data"
+        explore = "master"
 
         looker_explore_reference = geminidataanalytics.LookerExploreReference(
             looker_instance_uri=looker_instance_uri, lookml_model=lookml_model, explore=explore
         )
-
-        bigquery_table_reference = geminidataanalytics.BigQueryTableReference(
-            project_id=bq_project_id, dataset_id=bq_dataset_id, table_id=bq_table_id
-        )
-
+        
         credentials = geminidataanalytics.Credentials()
         credentials.oauth.secret.client_id = looker_client_id
         credentials.oauth.secret.client_secret = looker_client_secret
 
         datasource_references = geminidataanalytics.DatasourceReferences(
-            # bq=geminidataanalytics.BigQueryTableReferences(
-            #     table_references=[bigquery_table_reference]
-            # ),
             looker=geminidataanalytics.LookerExploreReferences(
                 explore_references=[looker_explore_reference],
-                # credentials=credentials # Note: uncomment this only in case of stateless chat via inline context
             ),
         )
 
-        # Set up context for stateful chat
+     
         published_context = geminidataanalytics.Context()
         published_context.system_instruction = system_instruction
         published_context.datasource_references = datasource_references
         published_context.options.analysis.python.enabled = True
 
-        data_agent_id = f"agent_{uuid.uuid4().hex[:8]}"
-
-
-        try: 
-            request = geminidataanalytics.GetDataAgentRequest(
-                name=data_agent_client.data_agent_path(billing_project, location, data_agent_id)
+        # Create or Get a unique Data Agent
+        self.data_agent_id = "agent_50"
+        try:
+            self.data_agent_client.get_data_agent(
+                name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
             )
-            response = data_agent_client.get_data_agent(request=request)
-            print(response)
+            print(f"Using existing Data Agent: {self.data_agent_id}")
         except Exception as e:
+            print(f"Failed to get Data Agent: {e}")
+            print(f"Creating new Data Agent: {self.data_agent_id}")
             data_agent = geminidataanalytics.DataAgent(
                 data_analytics_agent=geminidataanalytics.DataAnalyticsAgent(
                     published_context=published_context
                 ),
             )
-            request = geminidataanalytics.CreateDataAgentRequest(
-                parent=f"projects/{billing_project}/locations/{location}",
-                data_agent_id=data_agent_id,  
+            self.data_agent_client.create_data_agent(
+                parent=f"projects/{self.billing_project}/locations/{self.location}",
+                data_agent_id=self.data_agent_id,
                 data_agent=data_agent,
             )
 
-            try:
-                response = data_agent_client.create_data_agent(request=request)
-                print(f"Data Agent created:\n\n{response.metadata}")
-            except Exception as e:
-                print(f"Error creating Data Agent: {e}")
-
-
-        # Initialize request argument(s)  # @param {type:"string"}
-        conversation_id = f"conversation_{uuid.uuid4().hex[:8]}"  # Generate unique ID
-
+        # Create a conversation and store its reference on `self`
+        self.conversation_id = f"conversation_uniquecode_{uuid.uuid4().hex[:12]}"
         conversation = geminidataanalytics.Conversation(
-            agents=[data_chat_client.data_agent_path(billing_project, location, data_agent_id)],
+            agents=[self.data_chat_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)],
         )
-
-
-
-        request = geminidataanalytics.CreateConversationRequest(
-            parent=f"projects/{billing_project}/locations/{location}",
-            conversation_id=conversation_id,
+        self.data_chat_client.create_conversation(
+            parent=f"projects/{self.billing_project}/locations/{self.location}",
+            conversation_id=self.conversation_id,
             conversation=conversation,
         )
 
-        # Make the request
-        response = data_chat_client.create_conversation(request=request)
-
-        # Handle the response
-        print(response)
-
-        # Create a conversation_reference
-        conversation_reference = geminidataanalytics.ConversationReference(
-            conversation=data_chat_client.conversation_path(
-                billing_project, location, conversation_id
+        # This reference is now stored on the instance for the chat method to use
+        self.conversation_reference = geminidataanalytics.ConversationReference(
+            conversation=self.data_chat_client.conversation_path(
+                self.billing_project, self.location, self.conversation_id
             ),
             data_agent_context=geminidataanalytics.DataAgentContext(
-                data_agent=data_chat_client.data_agent_path(
-                    billing_project, location, data_agent_id
+                data_agent=self.data_chat_client.data_agent_path(
+                    self.billing_project, self.location, self.data_agent_id
                 ),
-                credentials=credentials  # Uncomment if using Looker datasource
+                credentials=credentials
             ),
         )
-
-        print("🤖 Chatbot ready! Type 'exit' to quit.")
-        print("=" * 50)
-
-
-while True: 
-    try:
-        question = input("\n💬 Enter your message: ").strip()
-
-        if question.lower() in ["exit", "quit", "bye"]:
-            print("👋 Goodbye!")
-            break
         
+        print("🤖 Chatbot ready!")
+
+    def chat(self, question: str) -> str:
+        """
+        Sends a question to the Gemini Data Analytics agent and returns the complete,
+        aggregated response as a string.
+        """
         if not question:
-            print("⚠️  Please enter a message.")
-            continue
+            print("⚠️ No question provided")
+            return ""
 
-        # Create the user message
-        messages = [
-            geminidataanalytics.Message(
-                user_message=geminidataanalytics.UserMessage(text=question)
-            )
-        ]
-
-        # Form the request
-        request = geminidataanalytics.ChatRequest(
-            parent=f"projects/{billing_project}/locations/{location}",
-            messages=messages,
-            conversation_reference=conversation_reference,
-        )
-
-        print("🔄 Processing your request...")
-        
         try:
-            # Make the request
-            stream = data_chat_client.chat(request=request)
+            # Create the user message
+            messages = [
+                geminidataanalytics.Message(
+                    user_message=geminidataanalytics.UserMessage(text=question)
+                )
+            ]
 
-            # Handle the response
-            print("🤖 Response:")
-            print("-" * 30)
+            # Form the request using the stored conversation reference
+            request = geminidataanalytics.ChatRequest(
+                parent=f"projects/{self.billing_project}/locations/{self.location}",
+                messages=messages,
+                conversation_reference=self.conversation_reference,
+            )
+
+            # Make the streaming API call
+            stream = self.data_chat_client.chat(request=request)
+
+            print(f"🔍 Debugging response structure for question: '{question}'")
             
-            for response in stream:
-                try:
-                    show_message(response)
-                except Exception as msg_error:
-                    print(f"⚠️  Error displaying message: {msg_error}")
-                    print(f"Raw response: {response}")
-                    
+            # Collect all response text
+            full_response_text = ""
+            
+            # Debug the response structure
+            for i, response in enumerate(stream):
+                print(f"📦 Response chunk {i}:")
+                print(f"   Type: {type(response)}")
+                print(f"   Full response: {response}")
+                
+                # Use the utility function to handle the message
+                print(f"🔧 Using utility function to process message:")
+                show_message(response)
+                
+                # Extract text content for return value
+                if hasattr(response, 'system_message') and hasattr(response.system_message, 'text'):
+                    if hasattr(response.system_message.text, 'parts'):
+                        parts_text = "".join(response.system_message.text.parts)
+                        full_response_text += parts_text
+                        print(f"📝 Extracted text: {parts_text}")
+                
+                print("   " + "="*50)
+            
+            print("🏁 Finished processing all response chunks")
+            return full_response_text.strip() if full_response_text else "No response content found"
+
         except Exception as api_error:
             print(f"❌ API Error: {api_error}")
-            print("🔄 You can try asking again or rephrase your question.")
-            
-    except KeyboardInterrupt:
-        print("\n\n🛑 Interrupted by user. Goodbye!")
-        break
-    except Exception as general_error:
-        print(f"❌ Unexpected error: {general_error}")
-        print("🔄 Continuing... You can try asking again.")
-        continue
+            print(f"❌ Error type: {type(api_error)}")
+            return f"Error: {str(api_error)}"
