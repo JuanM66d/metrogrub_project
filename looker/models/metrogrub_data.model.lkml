@@ -14,27 +14,24 @@ datagroup: metrogrub_data_default_datagroup {
 
 persist_with: metrogrub_data_default_datagroup
 
-
 explore: master {
   group_label: "metrogrub_data"
+  from: master_table_final_v3
 }
 
-explore: foot_traffic {
+explore: master_looker {
   group_label: "metrogrub_data"
-  from: yearly_average
+  from: master_final_looker
 }
 
-explore: cta_stations {
+explore: grid_zones {
   group_label: "metrogrub_data"
-  from: clean_cta_bus_stations
+  from: grid_zones
 }
 
-explore: divvy_stations {
-  group_label: "metrogrub_data"
-  from:  clean_divvy_stations_data
-}
 
-explore: zoning {
-  group_label: "metrogrub_data"
-  from:  clean_zoning_data
+map_layer: location_zones {
+  file: "map.topojson"
+  format: "topojson"
+  property_key: "zone_id"
 }
