@@ -35,15 +35,17 @@ tab1, tab2 = st.tabs(["🗺️ Location Zone Map", "📍 Location Point Map"])
 with tab1:
     st.subheader("Analyze Average Scores by Zone")
     components.html(
-        f'<iframe src="{map_url_1}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
-        height=820,
+        f'<iframe src="{map_url_1}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
+        height=2000,
+        width=2000,
     )
 
 with tab2:
     st.subheader("Competitor Locations & Businesses")
     components.html(
-        f'<iframe src="{map_url_2}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
-        height=820,
+        f'<iframe src="{map_url_2}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
+        height=2000,
+        width=2000,
     )
 
 
