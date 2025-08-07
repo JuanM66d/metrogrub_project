@@ -46,7 +46,7 @@ class Chatbot:
         published_context.options.analysis.python.enabled = True
 
         # Create or Get a unique Data Agent
-        self.data_agent_id = "agent_50"
+        self.data_agent_id = "agent_70"
         try:
             self.data_agent_client.get_data_agent(
                 name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
@@ -139,12 +139,19 @@ class Chatbot:
                     if hasattr(response.system_message.text, 'parts'):
                         parts_text = "".join(response.system_message.text.parts)
                         full_response_text += parts_text
-                        print(f"📝 Extracted text: {parts_text}")
-                
+                        if full_response_text.startswith("The Location Scoring Model"):
+                            full_response_text = """
+                                Location Scoring Model: 0-100 score based on weighted factors:
+                                * **Demographics (30%)** - population density, household income, age distribution, daytime population
+                                * **Foot Traffic & Visibility (25%)** - pedestrian counts, vehicle counts, road proximity, street visibility
+                                * **Competition (20%)** - direct competitors within 1-mile, market saturation
+                                * **Site Characteristics (15%)** - size/layout, parking, accessibility, zoning
+                                * **Local Attractions (10%)** - proximity to schools, entertainment, business districts
+                                """
                 print("   " + "="*50)
             
             print("🏁 Finished processing all response chunks")
-            return full_response_text.strip() if full_response_text else "No response content found"
+            return full_response_text if full_response_text else "No response content found"
 
         except Exception as api_error:
             print(f"❌ API Error: {api_error}")
