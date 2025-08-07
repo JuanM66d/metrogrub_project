@@ -26,11 +26,11 @@ st.title("MetroGrub Site Selection 🍔")
 sidebar_chat()
 
 # Embed URLs for each Looker Studio map
-map_url_1 = "https://panderasystems.looker.com/embed/dashboards/2490"
-map_url_2 = "https://panderasystems.looker.com/embed/dashboards/734"
+map_url_1 = "https://panderasystems.looker.com/embed/dashboards/734"
+map_url_2 = "https://panderasystems.looker.com/embed/dashboards/2490"
 
 # Create tabs
-tab1, tab2 = st.tabs(["🗺️ Location Zone Map", "📍 Location Point Map"])
+tab1, tab2 = st.tabs(["📍 Location Point Map","🗺️ Location Zone Map"])
 
 with tab1:
     st.subheader("Analyze Average Scores by Zone")
