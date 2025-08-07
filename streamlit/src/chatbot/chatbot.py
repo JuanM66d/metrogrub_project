@@ -46,7 +46,7 @@ class Chatbot:
         published_context.options.analysis.python.enabled = True
 
         # Create or Get a unique Data Agent
-        self.data_agent_id = "agent_50"
+        self.data_agent_id = "agent2-1"
         try:
             self.data_agent_client.get_data_agent(
                 name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
@@ -139,12 +139,20 @@ class Chatbot:
                     if hasattr(response.system_message.text, 'parts'):
                         parts_text = "".join(response.system_message.text.parts)
                         full_response_text += parts_text
-                        print(f"📝 Extracted text: {parts_text}")
-                
+                        if full_response_text.startswith("The Location Scoring Model"):
+                            full_response_text = """
+                                    This model generates a score from 0 to 100 based on the following weighted factors:
+                                    * **Demand Potential (20%)**: Considers the age of the local demographic (18-49) and local foot traffic.
+                                    * **Accessibility/Convenience (15%)**: Evaluates the number of nearby bus stops and Divvy bike stations.
+                                    * **Complementary Businesses (30%)**: Accounts for the number of cafes, schools, fine dining restaurants, bars, and other commercial establishments (healthcare, entertainment, fitness, etc.).
+                                    * **Competition/Detractors (-15% / -5% / -0%)**: Applies a penalty based on the number of fast-food restaurants. A -15% penalty is applied if there are 7 or more, -5% for 5 to 6, and no penalty for 4 or fewer.
+                                    ***
+                                    For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1d6RpFXYmqh80XPRJqknQFWzTd-jlgpPIi7ZQcgxIMzc/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
+                                    """
                 print("   " + "="*50)
             
             print("🏁 Finished processing all response chunks")
-            return full_response_text.strip() if full_response_text else "No response content found"
+            return full_response_text if full_response_text else "No response content found"
 
         except Exception as api_error:
             print(f"❌ API Error: {api_error}")
