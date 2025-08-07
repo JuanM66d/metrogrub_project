@@ -53,6 +53,9 @@ def sidebar_chat():
                     with st.spinner("Thinking..."):
                         # Call the chatbot
                         response = chatbot.chat(user_message)
+
+                        print("RESPONSE: ", response)
+
                         # Display the response
                         st.markdown(response)
             
