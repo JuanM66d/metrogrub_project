@@ -1,0 +1,327 @@
+################################################################################
+# Auto-generates pipeline components from declarative configuration
+################################################################################
+
+# Global Pipeline Settings
+pipeline:
+  name: "metrogrub-location-score-prediction-v3"
+  description: "Config-driven ML pipeline for location score prediction"
+  version: "3.0.0"
+
+# Shared Component Settings
+defaults:
+  base_image: "python:3.9-slim"
+  packages:
+    - "google-cloud-bigquery==3.11.4"
+    - "pandas==2.0.3"
+    - "numpy==1.24.3"
+    - "scikit-learn==1.3.0"
+    - "google-cloud-aiplatform==1.36.0"
+    - "pyarrow==12.0.1"
+    - "db-dtypes==1.1.1"
+    - "protobuf==3.20.3"
+  retry_policy:
+    max_retries: 3
+    backoff_factor: 2
+
+# Component Definitions
+components:
+
+  # Data Extraction Component
+  data_extraction:
+    type: "bigquery_extract"
+    description: "Extract training data from BigQuery with validation"
+    config:
+      query_template: |
+        SELECT category, is_food, foot_traffic_score, final_location_score, entity_name
+        FROM `{table}` 
+        WHERE final_location_score IS NOT NULL 
+        AND foot_traffic_score IS NOT NULL 
+        AND category IS NOT NULL 
+        AND is_food IS NOT NULL 
+        AND entity_name IS NOT NULL
+      validation:
+        required_columns: ["category", "is_food", "foot_traffic_score", "final_location_score", "entity_name"]
+        min_rows: 100
+        max_nan_percentage: 0.05
+      output_format: "csv"
+    inputs:
+      - name: "project_id"
+        type: "str"
+      - name: "table_name"
+        type: "str"
+      - name: "feature_columns"
+        type: "list"
+      - name: "target_column"
+        type: "str"
+    outputs:
+      - name: "output_dataset"
+        type: "Dataset"
+      - name: "num_rows"
+        type: "int"
+      - name: "num_features"
+        type: "int"
+
+  # Data Preprocessing Component  
+  preprocessing:
+    type: "preprocess"
+    description: "Preprocess data and split into train/test sets"
+    config:
+      test_size: 0.2
+      random_state: 42
+      stratify: true
+      preprocessing:
+        categorical_features: ["category"]
+        numerical_features: ["is_food", "foot_traffic_score"]
+        categorical_encoder: "OneHotEncoder"
+        numerical_scaler: "StandardScaler"
+        encoder_params:
+          handle_unknown: "ignore"
+          sparse_output: false
+      validation:
+        min_train_size: 100
+        min_test_size: 20
+    inputs:
+      - name: "input_dataset"
+        type: "Dataset"
+      - name: "feature_columns" 
+        type: "list"
+      - name: "target_column"
+        type: "str"
+    outputs:
+      - name: "train_dataset"
+        type: "Dataset"
+      - name: "test_dataset"
+        type: "Dataset"
+      - name: "preprocessor"
+        type: "Model"
+      - name: "train_rows"
+        type: "int"
+      - name: "test_rows"
+        type: "int"
+      - name: "feature_count"
+        type: "int"
+
+  # Model Training Component
+  training:
+    type: "train"
+    description: "Train Random Forest model with configurable parameters"
+    config:
+      model_class: "RandomForestRegressor"
+      model_params:
+        n_estimators: 100
+        max_depth: 10
+        min_samples_split: 5
+        min_samples_leaf: 2
+        random_state: 42
+        n_jobs: -1
+      metrics:
+        - "r2_score"
+        - "rmse" 
+        - "mae"
+        - "mse"
+      feature_importance: true
+      performance_thresholds:
+        min_r2: 0.6
+        warn_r2: 0.7
+        excellent_r2: 0.8
+    inputs:
+      - name: "train_dataset"
+        type: "Dataset"
+      - name: "test_dataset"
+        type: "Dataset"
+      - name: "feature_columns"
+        type: "list"
+    outputs:
+      - name: "model"
+        type: "Model"
+      - name: "train_score"
+        type: "float"
+      - name: "test_score"
+        type: "float"
+      - name: "feature_importance"
+        type: "str"
+
+  # Model Registry Component
+  model_registry:
+    type: "register"
+    description: "Register model to Vertex AI Model Registry with metadata"
+    config:
+      serving_container: "us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.1-3:latest"
+      labels:
+        model_type: "random_forest"
+        use_case: "location_scoring"
+        training_framework: "scikit_learn"
+        quarterly_model: "true"
+        pipeline_version: "v3"
+      metadata_template: |
+        Quarterly trained Random Forest model for MetroGrub location score prediction.
+        
+        Performance Metrics:
+        - Training R² Score: {train_score:.4f}
+        - Test R² Score: {test_score:.4f}
+        - Features: {num_features}
+        
+        Training Date: {training_date}
+      artifacts:
+        - "model.pkl"
+        - "preprocessor.pkl" 
+        - "metadata.json"
+    inputs:
+      - name: "project_id"
+        type: "str"
+      - name: "region"
+        type: "str"
+      - name: "model_display_name"
+        type: "str"
+      - name: "model_description"
+        type: "str"
+      - name: "model"
+        type: "Model"
+      - name: "preprocessor"
+        type: "Model"
+      - name: "train_score"
+        type: "float"
+      - name: "test_score"
+        type: "float"
+      - name: "feature_importance"
+        type: "str"
+      - name: "feature_columns"
+        type: "list"
+    outputs:
+      - name: "model_resource_name"
+        type: "str"
+      - name: "model_version_id"
+        type: "str"
+
+  # Prediction Component
+  prediction:
+    type: "predict"
+    description: "Make predictions and update BigQuery table"
+    config:
+      prediction_query_template: |
+        SELECT {features}, {target}, entity_name 
+        FROM `{table}` 
+        WHERE {target} IS NOT NULL 
+        AND foot_traffic_score IS NOT NULL 
+        AND category IS NOT NULL 
+        AND is_food IS NOT NULL 
+        AND entity_name IS NOT NULL
+      temp_table_suffix: "_predictions_temp"
+      merge_strategy: "UPDATE"
+      prediction_stats:
+        - "mean"
+        - "std"
+        - "min"
+        - "max"
+        - "percentiles"
+      cleanup_temp_tables: true
+    inputs:
+      - name: "project_id"
+        type: "str"
+      - name: "table_name"
+        type: "str"
+      - name: "feature_columns"
+        type: "list"
+      - name: "target_column"
+        type: "str"
+      - name: "prediction_column"
+        type: "str"
+      - name: "model"
+        type: "Model"
+      - name: "preprocessor"
+        type: "Model"
+    outputs:
+      - name: "updated_rows"
+        type: "int"
+      - name: "prediction_stats"
+        type: "str"
+
+  # Table Creation Component
+  table_creation:
+    type: "table_ops"
+    description: "Create target table by copying from source"
+    config:
+      operation: "copy_and_extend"
+      column_to_add:
+        name: "{prediction_column}"
+        type: "INT64"
+        mode: "NULLABLE"
+      if_exists: "replace"
+    inputs:
+      - name: "project_id"
+        type: "str"
+      - name: "source_table"
+        type: "str"
+      - name: "target_table"
+        type: "str"
+      - name: "prediction_column"
+        type: "str"
+    outputs:
+      - name: "success"
+        type: "bool"
+      - name: "rows_copied"
+        type: "int"
+
+# Pipeline Flow Definition
+pipeline_flow:
+  steps:
+    - name: "create_table"
+      component: "table_creation"
+      inputs:
+        project_id: "${project_id}"
+        source_table: "${source_table}"
+        target_table: "${target_table}"
+        prediction_column: "${prediction_column}"
+
+    - name: "extract_data"
+      component: "data_extraction"
+      depends_on: ["create_table"]
+      inputs:
+        project_id: "${project_id}"
+        table_name: "${source_table}"
+        feature_columns: "${feature_columns}"
+        target_column: "${target_column}"
+
+    - name: "preprocess_data"
+      component: "preprocessing"
+      depends_on: ["extract_data"]
+      inputs:
+        input_dataset: "extract_data.outputs['output_dataset']"
+        feature_columns: "${feature_columns}"
+        target_column: "${target_column}"
+
+    - name: "train_model"
+      component: "training"
+      depends_on: ["preprocess_data"]
+      inputs:
+        train_dataset: "preprocess_data.outputs['train_dataset']"
+        test_dataset: "preprocess_data.outputs['test_dataset']"
+        feature_columns: "${feature_columns}"
+
+    - name: "register_model"
+      component: "model_registry"
+      depends_on: ["train_model"]
+      inputs:
+        project_id: "${project_id}"
+        region: "${region}"
+        model_display_name: "${model_display_name}"
+        model_description: "${model_description}"
+        model: "train_model.outputs['model']"
+        preprocessor: "preprocess_data.outputs['preprocessor']"
+        train_score: "train_model.outputs['train_score']"
+        test_score: "train_model.outputs['test_score']"
+        feature_importance: "train_model.outputs['feature_importance']"
+        feature_columns: "${feature_columns}"
+
+    - name: "make_predictions"
+      component: "prediction"
+      depends_on: ["register_model"]
+      inputs:
+        project_id: "${project_id}"
+        table_name: "${target_table}"
+        feature_columns: "${feature_columns}"
+        target_column: "${target_column}"
+        prediction_column: "${prediction_column}"
+        model: "train_model.outputs['model']"
+        preprocessor: "preprocess_data.outputs['preprocessor']" 
