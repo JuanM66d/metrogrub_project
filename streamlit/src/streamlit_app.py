@@ -20,6 +20,21 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.markdown("""
+<style>
+    .block-container {
+        padding-top: 2.5rem;
+        padding-bottom: 5rem;
+        padding-left: 4rem;
+        padding-right: 5rem;
+    }
+
+    [data-testid="stSidebar"][aria-expanded="true"] {
+        min-width: 350px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Main content
 st.title("MetroGrub Site Selection 🍔")
 
@@ -38,7 +53,7 @@ with tab1:
     st.subheader("Analyze Average Scores by Zone")
     components.html(
         f'<iframe src="{map_url_1}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
-        height=2000,
+        height=1150,
         width=2000,
     )
 
@@ -46,7 +61,7 @@ with tab2:
     st.subheader("Competitor Locations & Businesses")
     components.html(
         f'<iframe src="{map_url_2}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
-        height=2000,
+        height=1150,
         width=2000,
     )
 

@@ -13,6 +13,8 @@ except Exception as e:
 @st.fragment
 def sidebar_chat():
         st.title("Chat Assistant")
+
+
         
         # Define a container for the chat history with a fixed height and scrolling
         chat_container = st.container(height=500)
@@ -29,7 +31,7 @@ def sidebar_chat():
             clear_chat_history()
 
         # Capture user input. st.chat_input will always appear at the bottom of the screen.
-        if user_message := st.chat_input("Ask questions about the data or dashboard"):
+        if user_message := st.chat_input("Enter prompt here"):
             # Add user's message to state immediately
             st.session_state.messages.append({"role": "user", "content": user_message})
 
