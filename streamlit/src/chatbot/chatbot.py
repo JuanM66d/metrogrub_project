@@ -46,7 +46,7 @@ class Chatbot:
         published_context.options.analysis.python.enabled = True
 
         # Create or Get a unique Data Agent
-        self.data_agent_id = "agent2-6"
+        self.data_agent_id = "agent3-1"
         try:
             self.data_agent_client.get_data_agent(
                 name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
@@ -54,17 +54,20 @@ class Chatbot:
             print(f"Using existing Data Agent: {self.data_agent_id}")
         except Exception as e:
             print(f"Failed to get Data Agent: {e}")
-            print(f"Creating new Data Agent: {self.data_agent_id}")
-            data_agent = geminidataanalytics.DataAgent(
-                data_analytics_agent=geminidataanalytics.DataAnalyticsAgent(
-                    published_context=published_context
-                ),
-            )
-            self.data_agent_client.create_data_agent(
-                parent=f"projects/{self.billing_project}/locations/{self.location}",
-                data_agent_id=self.data_agent_id,
-                data_agent=data_agent,
-            )
+            try:
+                print(f"Creating new Data Agent: {self.data_agent_id}")
+                data_agent = geminidataanalytics.DataAgent(
+                    data_analytics_agent=geminidataanalytics.DataAnalyticsAgent(
+                        published_context=published_context
+                    ),
+                )
+                self.data_agent_client.create_data_agent(
+                    parent=f"projects/{self.billing_project}/locations/{self.location}",
+                    data_agent_id=self.data_agent_id,
+                    data_agent=data_agent,
+                )
+            except Exception as e:
+                print(f"Failed to create Data Agent: {e}")
 
         # Create a conversation and store its reference on `self`
         self.conversation_id = f"conversation_uniquecode_{uuid.uuid4().hex[:12]}"
@@ -141,7 +144,7 @@ class Chatbot:
                                     * **Complementary Businesses (30%)**: Accounts for the number of cafes, schools, fine dining restaurants, bars, and other commercial establishments (healthcare, entertainment, fitness, etc.).
                                     * **Competition/Detractors (-15% / -5% / -0%)**: Applies a penalty based on the number of fast-food restaurants. A -15% penalty is applied if there are 7 or more, -5% for 5 to 6, and no penalty for 4 or fewer.
                                     ***
-                                    For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1d6RpFXYmqh80XPRJqknQFWzTd-jlgpPIi7ZQcgxIMzc/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
+                                    For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1jDdGQL9PIm4OYOFovygvg2UfW5hemBrUepa7xFMbDdI/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
                                     """
             return full_response_text if full_response_text else "No response content found"
 
