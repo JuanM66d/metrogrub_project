@@ -23,7 +23,9 @@ st.set_page_config(
 # Main content
 st.title("MetroGrub Site Selection 🍔")
 
-sidebar_chat()
+
+with st.sidebar:
+    sidebar_chat()
 
 # Embed URLs for each Looker Studio map
 map_url_1 = "https://panderasystems.looker.com/embed/dashboards/734"

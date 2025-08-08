@@ -46,7 +46,7 @@ class Chatbot:
         published_context.options.analysis.python.enabled = True
 
         # Create or Get a unique Data Agent
-        self.data_agent_id = "agent2-1"
+        self.data_agent_id = "agent2-6"
         try:
             self.data_agent_client.get_data_agent(
                 name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
@@ -89,16 +89,16 @@ class Chatbot:
                 credentials=credentials
             ),
         )
-        
-        print("🤖 Chatbot ready!")
+        print("Conversation created", self.conversation_id)
 
     def chat(self, question: str) -> str:
         """
         Sends a question to the Gemini Data Analytics agent and returns the complete,
         aggregated response as a string.
         """
+
         if not question:
-            print("⚠️ No question provided")
+            print("No question provided")
             return ""
 
         try:
@@ -119,19 +119,13 @@ class Chatbot:
             # Make the streaming API call
             stream = self.data_chat_client.chat(request=request)
 
-            print(f"🔍 Debugging response structure for question: '{question}'")
+            print(f"USER_INPUT:'{question}'")
             
             # Collect all response text
             full_response_text = ""
             
             # Debug the response structure
             for i, response in enumerate(stream):
-                print(f"📦 Response chunk {i}:")
-                print(f"   Type: {type(response)}")
-                print(f"   Full response: {response}")
-                
-                # Use the utility function to handle the message
-                print(f"🔧 Using utility function to process message:")
                 show_message(response)
                 
                 # Extract text content for return value
@@ -149,9 +143,6 @@ class Chatbot:
                                     ***
                                     For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1d6RpFXYmqh80XPRJqknQFWzTd-jlgpPIi7ZQcgxIMzc/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
                                     """
-                print("   " + "="*50)
-            
-            print("🏁 Finished processing all response chunks")
             return full_response_text if full_response_text else "No response content found"
 
         except Exception as api_error:

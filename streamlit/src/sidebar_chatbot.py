@@ -4,28 +4,22 @@ from chatbot.chatbot import Chatbot
 
 # Initialize chatbot at startup for faster response times
 try:
-    chatbot = Chatbot()
+    st.session_state.chatbot = Chatbot()
     print("Chatbot initialized successfully!")
 except Exception as e:
     print(f" Failed to initialize chatbot: {e}")
-    chatbot = None
+    st.session_state.chatbot = None
 
+@st.fragment
 def sidebar_chat():
-    with st.sidebar:
-        st.title("Chat with Data")
+        st.title("Chat Assistant")
         
-        # Show chatbot status
-        if chatbot is None:
-            st.error("Chatbot is not available. Please check Google Cloud credentials.")
-            st.info("Run `gcloud auth application-default login` to set up credentials.")
-            return
-
         # Define a container for the chat history with a fixed height and scrolling
         chat_container = st.container(height=500)
 
         # Define the function to clear chat history
         def clear_chat_history():
-            st.session_state.messages = [{"role": "assistant", "content": "How can I help you analyze the data?"}]
+            st.session_state.messages = [{"role": "assistant", "content": "How can I help you today?"}]
         
         # Add the clear chat button at the top (or bottom, your choice)
         st.button("Clear chat", on_click=clear_chat_history)
@@ -35,7 +29,7 @@ def sidebar_chat():
             clear_chat_history()
 
         # Capture user input. st.chat_input will always appear at the bottom of the screen.
-        if user_message := st.chat_input("Ask questions about the data"):
+        if user_message := st.chat_input("Ask questions about the data or dashboard"):
             # Add user's message to state immediately
             st.session_state.messages.append({"role": "user", "content": user_message})
 
@@ -52,12 +46,19 @@ def sidebar_chat():
                 with st.chat_message("assistant"):
                     with st.spinner("Thinking..."):
                         # Call the chatbot
-                        response = chatbot.chat(user_message)
+
+                        if 'chatbot' not in st.session_state:
+                            st.session_state.chatbot = Chatbot()
+
+                        response = st.session_state.chatbot.chat(user_message)
 
                         print("RESPONSE: ", response)
 
-                        # Display the response
-                        st.markdown(response)
+                        if response.startswith("Error"):
+                            response = "I'm sorry, I'm having trouble processing your request. Please try again."
+                            st.session_state.chatbot = Chatbot()
+
             
             # Add the chatbot's response to the message history
             st.session_state.messages.append({"role": "assistant", "content": response})
+            st.rerun()
