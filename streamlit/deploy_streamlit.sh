@@ -27,6 +27,16 @@ if [ -z "$LOOKER_CLIENT_SECRET" ]; then
     exit 1
 fi
 
+if [ -z "$LOOKER_EMBED_SECRET" ]; then
+    echo "❌ Error: LOOKER_EMBED_SECRET environment variable is not set"
+    exit 1
+fi
+
+if [ -z "$LOOKER_HOST" ]; then
+    echo "❌ Error: LOOKER_HOST environment variable is not set"
+    exit 1
+fi
+
 echo "✅ Environment variables validated"
 
 # Docker
@@ -41,6 +51,6 @@ gcloud run deploy metrogrub-streamlit-app \
   --image="$FULL_IMAGE_NAME" \
   --region="$REGION" \
   --allow-unauthenticated \
-  --set-env-vars="LOOKER_CLIENT_ID=${LOOKER_CLIENT_ID},LOOKER_CLIENT_SECRET=${LOOKER_CLIENT_SECRET}" 
+  --set-env-vars="LOOKER_CLIENT_ID=${LOOKER_CLIENT_ID},LOOKER_CLIENT_SECRET=${LOOKER_CLIENT_SECRET},LOOKER_EMBED_SECRET=${LOOKER_EMBED_SECRET},LOOKER_HOST=${LOOKER_HOST}" 
 
 echo "✅ Done! Check: gcloud run services list" 
