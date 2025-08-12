@@ -45,10 +45,11 @@ with st.sidebar:
 
 signed_url_1 = get_signed_url("734")
 signed_url_2 = get_signed_url("2490")
+signed_url_3 = get_signed_url("2544")
      
 
 # Create tabs
-tab1, tab2 = st.tabs(["📍 Location Point Map","🗺️ Location Zone Map"])
+tab1, tab2, tab3 = st.tabs(["📍 Location Point Map","🗺️ Location Zone Map", "📊 Master Table Data"])
 
 with tab1:
     st.subheader("Competitor Locations & Businesses")
@@ -62,6 +63,14 @@ with tab2:
     st.subheader("Analyze Average Scores by Zone")
     components.html(
         f'<iframe src="{signed_url_2}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
+        height=1150,
+        width=2000,
+    )
+
+with tab3:
+    st.subheader("Master Table Data")
+    components.html(
+        f'<iframe src="{signed_url_3}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
         height=1150,
         width=2000,
     )
