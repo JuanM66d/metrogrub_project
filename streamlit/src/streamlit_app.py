@@ -66,11 +66,6 @@ with tab2:
         width=2000,
     )
 
-st.write(signed_url_1)
-st.write("--------------------------------")
-st.write("https://panderasystems.looker.com/login/embed/%2Fembed%2Fdashboards%2F734%3FCategory%3D%26Entity%2BName%3D%26Final%2BLocation%2BScore%3D%255B0%252C100%255D%26Address%3D?permissions=%5B%22access_data%22%2C%22see_looks%22%2C%22see_user_dashboards%22%5D&models=%5B%22metrogrub_data%22%5D&signature=vISMXxZp8ri2C0WLMSncAa%2FEEfs%3D&nonce=%226f5362cb95826ba8359dde962d93f7e5%22&time=1754947428&session_length=300&external_user_id=%22metrogrub_app%22&access_filters=%7B%7D&user_attributes=%7B%7D&force_logout_login=true")
-
-
 # Footer
 st.markdown("---")
 st.markdown("Built with ❤️ using Streamlit | MetroGrub Analytics Platform") 
