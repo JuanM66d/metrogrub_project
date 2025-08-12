@@ -100,7 +100,7 @@ def get_signed_url(dashboard_id):
   looker = Looker('panderasystems.looker.com', os.getenv("LOOKER_EMBED_SECRET"))
 
   user = User("metrogrub_app",
-              permissions=['see_user_dashboards', 'access_data'],
+              permissions=['see_user_dashboards', 'access_data', 'download_without_limit'],
               models=['metrogrub_data'],
               group_ids=[],
               user_attributes={},
