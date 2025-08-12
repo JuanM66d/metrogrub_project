@@ -51,7 +51,7 @@ signed_url_2 = get_signed_url("2490")
 tab1, tab2 = st.tabs(["📍 Location Point Map","🗺️ Location Zone Map"])
 
 with tab1:
-    st.subheader("Analyze Average Scores by Zone")
+    st.subheader("Competitor Locations & Businesses")
     components.html(
         f'<iframe src="{signed_url_1}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
         height=1150,
@@ -59,7 +59,7 @@ with tab1:
     )
 
 with tab2:
-    st.subheader("Competitor Locations & Businesses")
+    st.subheader("Analyze Average Scores by Zone")
     components.html(
         f'<iframe src="{signed_url_2}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
         height=1150,
