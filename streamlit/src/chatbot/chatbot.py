@@ -3,6 +3,7 @@ import uuid
 import os # You were using os.getenv, so we need to import os
 import dotenv
 from google.cloud import geminidataanalytics
+import hashlib
 
 # I'm assuming these are in your project structure
 from .util import show_message 
@@ -45,8 +46,11 @@ class Chatbot:
         published_context.datasource_references = datasource_references
         published_context.options.analysis.python.enabled = True
 
-        # Create or Get a unique Data Agent
-        self.data_agent_id = "agent3-1"
+      
+        # Derive a stable agent id from instruction + datasource so updates auto-create a new agent
+        _fingerprint_src = f"{system_instruction}|{lookml_model}|{explore}"
+        _fingerprint = hashlib.sha1(_fingerprint_src.encode("utf-8")).hexdigest()[:12]
+        self.data_agent_id = f"agent-{_fingerprint}"
         try:
             self.data_agent_client.get_data_agent(
                 name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
