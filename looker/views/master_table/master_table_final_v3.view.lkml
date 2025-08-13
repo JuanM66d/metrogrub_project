@@ -10,10 +10,12 @@ view: master_table_final_v3 {
     sql: INITCAP(REPLACE(${TABLE}.category, '_', ' '));;
   }
   dimension: entity_name {
+    label: "Location Name"
     type: string
     sql: ${TABLE}.entity_name ;;
   }
   dimension: final_location_score {
+    label: "Score"
     type: number
     sql: ${TABLE}.final_location_score ;;
   }
@@ -36,6 +38,14 @@ view: master_table_final_v3 {
   dimension: is_food {
     type: number
     sql: ${TABLE}.is_food ;;
+  }
+  dimension: zip_code {
+    type: string
+    sql: ${TABLE}.zip_code ;;
+  }
+  dimension: zone_id {
+    type: number
+    sql: ${TABLE}.zone_id ;;
   }
   dimension: latitude {
     type: number
