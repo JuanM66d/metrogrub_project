@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 import sys
 import os
 from sidebar_chatbot import sidebar_chat
-
+from create_signed_embed_url import get_signed_url
 
 # Add the chatbot directory to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'chatbot'))
@@ -20,32 +20,60 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.markdown("""
+<style>
+    .block-container {
+        padding-top: 2.5rem;
+        padding-bottom: 5rem;
+        padding-left: 4rem;
+        padding-right: 5rem;
+    }
+
+    [data-testid="stSidebar"][aria-expanded="true"] {
+        min-width: 350px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Main content
 st.title("MetroGrub Site Selection 🍔")
 
-sidebar_chat()
 
-# Embed URLs for each Looker Studio map
-map_url_1 = "https://panderasystems.looker.com/embed/dashboards/2490"
-map_url_2 = "https://panderasystems.looker.com/embed/dashboards/734"
+with st.sidebar:
+    sidebar_chat()
+
+
+signed_url_1 = get_signed_url("734")
+signed_url_2 = get_signed_url("2490")
+signed_url_3 = get_signed_url("2544")
+     
 
 # Create tabs
-tab1, tab2 = st.tabs(["🗺️ Location Zone Map", "📍 Location Point Map"])
+tab1, tab2, tab3 = st.tabs(["📍 Location Point Map","🗺️ Location Zone Map", "📊 Master Table Data"])
 
 with tab1:
-    st.subheader("Analyze Average Scores by Zone")
+    st.subheader("Competitor Locations & Businesses")
     components.html(
-        f'<iframe src="{map_url_1}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
-        height=820,
+        f'<iframe src="{signed_url_1}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
+        height=1150,
+        width=2000,
     )
 
 with tab2:
-    st.subheader("Competitor Locations & Businesses")
+    st.subheader("Analyze Average Scores by Zone")
     components.html(
-        f'<iframe src="{map_url_2}" width="100%" height="800" frameborder="0" allowfullscreen></iframe>',
-        height=820,
+        f'<iframe src="{signed_url_2}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
+        height=1150,
+        width=2000,
     )
 
+with tab3:
+    st.subheader("Master Table Data")
+    components.html(
+        f'<iframe src="{signed_url_3}" width="100%" height="2000" frameborder="0" allowfullscreen></iframe>',
+        height=1150,
+        width=2000,
+    )
 
 # Footer
 st.markdown("---")

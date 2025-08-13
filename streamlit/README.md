@@ -30,6 +30,9 @@ Before running the application, you need to set up Google Cloud authentication:
    ```
    LOOKER_CLIENT_ID=your_looker_client_id_here
    LOOKER_CLIENT_SECRET=your_looker_client_secret_here
+   LOOKER_EMBED_SECRET=looker_embed_secret_here from slack https://66degrees.slack.com/archives/C08S85Q5WH4/p1752786989999099?thread_ts=1752783360.483889&cid=C08S85Q5WH4 
+   LOOKER_HOST="panderasystems.looker.com"
+
    ```
 
 For Looker API credentials setup, see: https://cloud.google.com/looker/docs/api-auth 

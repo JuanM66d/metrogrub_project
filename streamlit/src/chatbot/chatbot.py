@@ -46,7 +46,7 @@ class Chatbot:
         published_context.options.analysis.python.enabled = True
 
         # Create or Get a unique Data Agent
-        self.data_agent_id = "agent_50"
+        self.data_agent_id = "agent3-1"
         try:
             self.data_agent_client.get_data_agent(
                 name=self.data_agent_client.data_agent_path(self.billing_project, self.location, self.data_agent_id)
@@ -54,17 +54,20 @@ class Chatbot:
             print(f"Using existing Data Agent: {self.data_agent_id}")
         except Exception as e:
             print(f"Failed to get Data Agent: {e}")
-            print(f"Creating new Data Agent: {self.data_agent_id}")
-            data_agent = geminidataanalytics.DataAgent(
-                data_analytics_agent=geminidataanalytics.DataAnalyticsAgent(
-                    published_context=published_context
-                ),
-            )
-            self.data_agent_client.create_data_agent(
-                parent=f"projects/{self.billing_project}/locations/{self.location}",
-                data_agent_id=self.data_agent_id,
-                data_agent=data_agent,
-            )
+            try:
+                print(f"Creating new Data Agent: {self.data_agent_id}")
+                data_agent = geminidataanalytics.DataAgent(
+                    data_analytics_agent=geminidataanalytics.DataAnalyticsAgent(
+                        published_context=published_context
+                    ),
+                )
+                self.data_agent_client.create_data_agent(
+                    parent=f"projects/{self.billing_project}/locations/{self.location}",
+                    data_agent_id=self.data_agent_id,
+                    data_agent=data_agent,
+                )
+            except Exception as e:
+                print(f"Failed to create Data Agent: {e}")
 
         # Create a conversation and store its reference on `self`
         self.conversation_id = f"conversation_uniquecode_{uuid.uuid4().hex[:12]}"
@@ -89,16 +92,16 @@ class Chatbot:
                 credentials=credentials
             ),
         )
-        
-        print("🤖 Chatbot ready!")
+        print("Conversation created", self.conversation_id)
 
     def chat(self, question: str) -> str:
         """
         Sends a question to the Gemini Data Analytics agent and returns the complete,
         aggregated response as a string.
         """
+
         if not question:
-            print("⚠️ No question provided")
+            print("No question provided")
             return ""
 
         try:
@@ -119,19 +122,13 @@ class Chatbot:
             # Make the streaming API call
             stream = self.data_chat_client.chat(request=request)
 
-            print(f"🔍 Debugging response structure for question: '{question}'")
+            print(f"USER_INPUT:'{question}'")
             
             # Collect all response text
             full_response_text = ""
             
             # Debug the response structure
             for i, response in enumerate(stream):
-                print(f"📦 Response chunk {i}:")
-                print(f"   Type: {type(response)}")
-                print(f"   Full response: {response}")
-                
-                # Use the utility function to handle the message
-                print(f"🔧 Using utility function to process message:")
                 show_message(response)
                 
                 # Extract text content for return value
@@ -139,12 +136,17 @@ class Chatbot:
                     if hasattr(response.system_message.text, 'parts'):
                         parts_text = "".join(response.system_message.text.parts)
                         full_response_text += parts_text
-                        print(f"📝 Extracted text: {parts_text}")
-                
-                print("   " + "="*50)
-            
-            print("🏁 Finished processing all response chunks")
-            return full_response_text.strip() if full_response_text else "No response content found"
+                        if full_response_text.startswith("The Location Scoring Model"):
+                            full_response_text = """
+                                    This model generates a score from 0 to 100 based on the following weighted factors:
+                                    * **Demand Potential (20%)**: Considers the age of the local demographic (18-49) and local foot traffic.
+                                    * **Accessibility/Convenience (15%)**: Evaluates the number of nearby bus stops and Divvy bike stations.
+                                    * **Complementary Businesses (30%)**: Accounts for the number of cafes, schools, fine dining restaurants, bars, and other commercial establishments (healthcare, entertainment, fitness, etc.).
+                                    * **Competition/Detractors (-15% / -5% / -0%)**: Applies a penalty based on the number of fast-food restaurants. A -15% penalty is applied if there are 7 or more, -5% for 5 to 6, and no penalty for 4 or fewer.
+                                    ***
+                                    For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1jDdGQL9PIm4OYOFovygvg2UfW5hemBrUepa7xFMbDdI/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
+                                    """
+            return full_response_text if full_response_text else "No response content found"
 
         except Exception as api_error:
             print(f"❌ API Error: {api_error}")
