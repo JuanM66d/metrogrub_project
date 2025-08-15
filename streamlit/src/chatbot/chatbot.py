@@ -4,12 +4,74 @@ import os # You were using os.getenv, so we need to import os
 import dotenv
 from google.cloud import geminidataanalytics
 import hashlib
+import re
 
 # I'm assuming these are in your project structure
 from .util import show_message 
 from .instructions import system_instruction
 
 dotenv.load_dotenv()
+
+_SMALL_WORDS = {"and","or","of","the","a","an","in","on","at","by","for","to","from","with"}
+_UPPER_KEEPS = {"CTA","USA","US","UK","EU","LLC","INC","LLP","PLC","TV"}
+
+
+def _smart_title_token(token: str, is_first: bool) -> str:
+    if not token:
+        return token
+    raw = token
+    # Preserve numbers and tokens starting with '#'
+    if raw.startswith('#') or any(ch.isdigit() for ch in raw):
+        return raw
+    # Preserve all-uppercase acronyms
+    if raw.upper() in _UPPER_KEEPS:
+        return raw.upper()
+    # Handle hyphenated words
+    if '-' in raw:
+        parts = raw.split('-')
+        return '-'.join(_smart_title_token(p, False) for p in parts)
+    # Normalize letters
+    lower = raw.lower()
+    if not is_first and lower in _SMALL_WORDS:
+        return lower
+    # Capitalize first letter, keep rest lower
+    return lower[:1].upper() + lower[1:]
+
+
+def _smart_title_phrase(text: str) -> str:
+    tokens = re.split(r"(\s+)", text)
+    out = []
+    word_index = 0
+    for tok in tokens:
+        if tok.strip() == "":
+            out.append(tok)
+        else:
+            out.append(_smart_title_token(tok, is_first=(word_index == 0)))
+            word_index += 1
+    return "".join(out)
+
+
+def _normalize_entity_names_in_text(text: str) -> str:
+    lines = text.splitlines()
+    out_lines = []
+    # Patterns for lines like "NAME: 100" optionally with bullet prefix
+    pat = re.compile(r"^([*-]\s*)?([A-Z0-9 #&'\-/]+):\s*(\d+(?:\.\d+)?)\s*$")
+    for line in lines:
+        m = pat.match(line)
+        if m:
+            prefix = m.group(1) or ""
+            name = m.group(2).strip()
+            score = m.group(3)
+            # Only convert if name appears to be mostly uppercase letters/spaces
+            if name.upper() == name:
+                name_titled = _smart_title_phrase(name)
+                out_lines.append(f"{prefix}{name_titled}: {score}")
+            else:
+                out_lines.append(line)
+        else:
+            out_lines.append(line)
+    return "\n".join(out_lines)
+
 
 class Chatbot:
     def __init__(self):
@@ -46,7 +108,7 @@ class Chatbot:
         published_context.datasource_references = datasource_references
         published_context.options.analysis.python.enabled = True
 
-      
+        # Create or Get a unique Data Agent
         # Derive a stable agent id from instruction + datasource so updates auto-create a new agent
         _fingerprint_src = f"{system_instruction}|{lookml_model}|{explore}"
         _fingerprint = hashlib.sha1(_fingerprint_src.encode("utf-8")).hexdigest()[:12]
@@ -98,15 +160,16 @@ class Chatbot:
         )
         print("Conversation created", self.conversation_id)
 
-    def chat(self, question: str) -> str:
+    def chat(self, question: str):
         """
-        Sends a question to the Gemini Data Analytics agent and returns the complete,
-        aggregated response as a string.
+        Sends a question to the Gemini Data Analytics agent and yields progress updates
+        along with the final response.
         """
 
         if not question:
             print("No question provided")
-            return ""
+            yield {"type": "error", "message": "No question provided"}
+            return
 
         try:
             # Create the user message
@@ -123,6 +186,9 @@ class Chatbot:
                 conversation_reference=self.conversation_reference,
             )
 
+            # Yield initial progress
+            yield {"type": "progress", "message": "Analyzing your question..."}
+
             # Make the streaming API call
             stream = self.data_chat_client.chat(request=request)
 
@@ -130,6 +196,7 @@ class Chatbot:
             
             # Collect all response text
             full_response_text = ""
+            progress_steps = []
             
             # Debug the response structure
             for i, response in enumerate(stream):
@@ -140,6 +207,18 @@ class Chatbot:
                     if hasattr(response.system_message.text, 'parts'):
                         parts_text = "".join(response.system_message.text.parts)
                         full_response_text += parts_text
+                        
+                        # Detect different stages based on response content
+                        if "SELECT" in parts_text and "FROM" in parts_text:
+                            progress_steps.append("Crafting SQL query...")
+                            yield {"type": "progress", "message": "Crafting SQL query...", "details": progress_steps}
+                        elif "schema" in parts_text.lower() or "table" in parts_text.lower():
+                            progress_steps.append("Reading database schema...")
+                            yield {"type": "progress", "message": "Reading database schema...", "details": progress_steps}
+                        elif "analyzing" in parts_text.lower() or "processing" in parts_text.lower():
+                            progress_steps.append("Processing data...")
+                            yield {"type": "progress", "message": "Processing data...", "details": progress_steps}
+                        
                         if full_response_text.startswith("The Location Scoring Model"):
                             full_response_text = """
                                     This model generates a score from 0 to 100 based on the following weighted factors:
@@ -150,9 +229,14 @@ class Chatbot:
                                     ***
                                     For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1jDdGQL9PIm4OYOFovygvg2UfW5hemBrUepa7xFMbDdI/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
                                     """
-            return full_response_text if full_response_text else "No response content found"
+            
+            # Post-process capitalization of entity names in common list formats
+            full_response_text = _normalize_entity_names_in_text(full_response_text)
+            
+            # Yield final response
+            yield {"type": "complete", "message": full_response_text if full_response_text else "No response content found", "details": progress_steps}
 
         except Exception as api_error:
             print(f"❌ API Error: {api_error}")
             print(f"❌ Error type: {type(api_error)}")
-            return f"Error: {str(api_error)}"
+            yield {"type": "error", "message": f"Error: {str(api_error)}"}
