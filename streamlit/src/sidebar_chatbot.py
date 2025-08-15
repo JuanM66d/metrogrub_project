@@ -29,26 +29,34 @@ def sidebar_chat():
         # Initialize session state for messages if it doesn't exist
         if "messages" not in st.session_state:
             clear_chat_history()
+        
+        # Initialize processing flag if it doesn't exist
+        if "processing_response" not in st.session_state:
+            st.session_state.processing_response = False
 
         # Capture user input. st.chat_input will always appear at the bottom of the screen.
         if user_message := st.chat_input("Enter prompt here"):
             # Add user's message to state immediately
             st.session_state.messages.append({"role": "user", "content": user_message})
+            st.session_state.processing_response = True
 
         # Display all messages from session state inside the container
         with chat_container:
             for message in st.session_state.messages:
                 with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-        
-        # Handle the chatbot's response logic
-        # Check if the last message was from the user, indicating we need a new response
-        if st.session_state.messages[-1]["role"] == "user":
-            with chat_container: # Ensure the spinner and response appear in the container
+                    st.markdown(message["content"]) 
+            
+            # Handle the chatbot's response logic inside the container
+            # Check if we need to process a new response
+            if st.session_state.processing_response and st.session_state.messages[-1]["role"] == "user":
+                # Get the user message
+                user_message = st.session_state.messages[-1]["content"]
+                
+                # Render a single assistant bubble with a spinner first, then replace with the final response
                 with st.chat_message("assistant"):
+                    response_placeholder = st.empty()
                     with st.spinner("Thinking..."):
                         # Call the chatbot
-
                         if 'chatbot' not in st.session_state:
                             st.session_state.chatbot = Chatbot()
 
@@ -59,8 +67,13 @@ def sidebar_chat():
                         if response.startswith("Error"):
                             response = "I'm sorry, I'm having trouble processing your request. Please try again."
                             st.session_state.chatbot = Chatbot()
-
+                    
+                    # Replace spinner with the final response inside the same assistant bubble
+                    response_placeholder.markdown(response)
+                
+                # Add the chatbot's response to the message history AFTER displaying
+                st.session_state.messages.append({"role": "assistant", "content": response})
+                
+                # Mark as processed
+                st.session_state.processing_response = False
             
-            # Add the chatbot's response to the message history
-            st.session_state.messages.append({"role": "assistant", "content": response})
-            st.rerun()
