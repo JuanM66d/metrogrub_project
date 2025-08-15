@@ -46,61 +46,20 @@ def sidebar_chat():
         if st.session_state.messages[-1]["role"] == "user":
             with chat_container: # Ensure the spinner and response appear in the container
                 with st.chat_message("assistant"):
-                    # Create placeholders for progress and details
-                    progress_placeholder = st.empty()
-                    details_expander = st.expander("Show processing details", expanded=False)
-                    details_placeholder = details_expander.empty()
-                    
-                    # Initialize progress tracking
-                    current_progress = "Analyzing your question..."
-                    progress_steps = []
-                    
-                    try:
+                    with st.spinner("Thinking..."):
+                        # Call the chatbot
+
                         if 'chatbot' not in st.session_state:
                             st.session_state.chatbot = Chatbot()
 
-                        # Get the streaming response from chatbot
-                        response_stream = st.session_state.chatbot.chat(user_message)
-                        
-                        # Process each progress update
-                        for update in response_stream:
-                            if update["type"] == "progress":
-                                current_progress = update["message"]
-                                if "details" in update:
-                                    progress_steps = update["details"]
-                                
-                                # Update the progress display
-                                progress_placeholder.info(current_progress)
-                                
-                                # Update details if available
-                                if progress_steps:
-                                    details_text = "\n".join([f"✓ {step}" for step in progress_steps])
-                                    details_placeholder.markdown(details_text)
-                                
-                            elif update["type"] == "complete":
-                                # Show final response
-                                progress_placeholder.success("✅ Analysis complete!")
-                                response = update["message"]
-                                
-                                # Update final details
-                                if "details" in update and update["details"]:
-                                    final_details = "\n".join([f"✓ {step}" for step in update["details"]])
-                                    details_placeholder.markdown(f"{final_details}\n\n**Final Response:**\n{response}")
-                                else:
-                                    details_placeholder.markdown(f"**Final Response:**\n{response}")
-                                
-                            elif update["type"] == "error":
-                                progress_placeholder.error("❌ Error occurred")
-                                response = update["message"]
-                                details_placeholder.error(f"Error: {response}")
-                                
-                    except Exception as e:
-                        progress_placeholder.error("❌ Error occurred")
-                        response = "I'm sorry, I'm having trouble processing your request. Please try again."
-                        details_placeholder.error(f"Exception: {str(e)}")
-                        st.session_state.chatbot = Chatbot()
+                        response = st.session_state.chatbot.chat(user_message)
 
-                    print("RESPONSE: ", response)
+                        print("RESPONSE: ", response)
+
+                        if response.startswith("Error"):
+                            response = "I'm sorry, I'm having trouble processing your request. Please try again."
+                            st.session_state.chatbot = Chatbot()
+
             
             # Add the chatbot's response to the message history
             st.session_state.messages.append({"role": "assistant", "content": response})

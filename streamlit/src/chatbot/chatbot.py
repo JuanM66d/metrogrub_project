@@ -160,16 +160,15 @@ class Chatbot:
         )
         print("Conversation created", self.conversation_id)
 
-    def chat(self, question: str):
+    def chat(self, question: str) -> str:
         """
-        Sends a question to the Gemini Data Analytics agent and yields progress updates
-        along with the final response.
+        Sends a question to the Gemini Data Analytics agent and returns the complete,
+        aggregated response as a string.
         """
 
         if not question:
             print("No question provided")
-            yield {"type": "error", "message": "No question provided"}
-            return
+            return ""
 
         try:
             # Create the user message
@@ -186,9 +185,6 @@ class Chatbot:
                 conversation_reference=self.conversation_reference,
             )
 
-            # Yield initial progress
-            yield {"type": "progress", "message": "Analyzing your question..."}
-
             # Make the streaming API call
             stream = self.data_chat_client.chat(request=request)
 
@@ -196,7 +192,6 @@ class Chatbot:
             
             # Collect all response text
             full_response_text = ""
-            progress_steps = []
             
             # Debug the response structure
             for i, response in enumerate(stream):
@@ -207,18 +202,6 @@ class Chatbot:
                     if hasattr(response.system_message.text, 'parts'):
                         parts_text = "".join(response.system_message.text.parts)
                         full_response_text += parts_text
-                        
-                        # Detect different stages based on response content
-                        if "SELECT" in parts_text and "FROM" in parts_text:
-                            progress_steps.append("Crafting SQL query...")
-                            yield {"type": "progress", "message": "Crafting SQL query...", "details": progress_steps}
-                        elif "schema" in parts_text.lower() or "table" in parts_text.lower():
-                            progress_steps.append("Reading database schema...")
-                            yield {"type": "progress", "message": "Reading database schema...", "details": progress_steps}
-                        elif "analyzing" in parts_text.lower() or "processing" in parts_text.lower():
-                            progress_steps.append("Processing data...")
-                            yield {"type": "progress", "message": "Processing data...", "details": progress_steps}
-                        
                         if full_response_text.startswith("The Location Scoring Model"):
                             full_response_text = """
                                     This model generates a score from 0 to 100 based on the following weighted factors:
@@ -229,14 +212,11 @@ class Chatbot:
                                     ***
                                     For additional information, please refer to the **[Location Scoring Model documentation](https://docs.google.com/presentation/d/1jDdGQL9PIm4OYOFovygvg2UfW5hemBrUepa7xFMbDdI/edit?slide=id.g375cfeefc74_0_27#slide=id.g375cfeefc74_0_27)**.
                                     """
-            
             # Post-process capitalization of entity names in common list formats
             full_response_text = _normalize_entity_names_in_text(full_response_text)
-            
-            # Yield final response
-            yield {"type": "complete", "message": full_response_text if full_response_text else "No response content found", "details": progress_steps}
+            return full_response_text if full_response_text else "No response content found"
 
         except Exception as api_error:
             print(f"❌ API Error: {api_error}")
             print(f"❌ Error type: {type(api_error)}")
-            yield {"type": "error", "message": f"Error: {str(api_error)}"}
+            return f"Error: {str(api_error)}"
