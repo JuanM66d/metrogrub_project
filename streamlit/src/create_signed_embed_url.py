@@ -106,8 +106,8 @@ def get_signed_url(dashboard_id):
               user_attributes={},
               access_filters={})
 
-  ONE_HOUR = 60 * 60
+  THREE_HOURS = 60 * 60 * 3
 
-  url = URL(looker, user, ONE_HOUR, f"/embed/dashboards/{dashboard_id}", force_logout_login=True)
+  url = URL(looker, user, THREE_HOURS, f"/embed/dashboards/{dashboard_id}", force_logout_login=True)
 
   return "https://" + url.to_string()
